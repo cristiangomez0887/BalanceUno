@@ -1,0 +1,83 @@
+<?php
+require_once __DIR__ . '/../models/Income.php';
+
+class IncomesController
+{
+
+    private $model;
+
+    public function __construct($db)
+    {
+        $this->model = new Income($db);
+    }
+
+    // Listar ingresos
+    public function index()
+    {
+        $incomes = $this->model->getAll();
+        include __DIR__ . '/../../views/incomes.php';
+    }
+
+    // Crear ingreso
+    public function create($data)
+    {
+        if (empty($data['date'])) {
+            $data['date'] = date('Y-m-d'); // formato ISO para la BD
+        } else {
+            // convertir de dd/mm/yyyy a yyyy-mm-dd
+            $parts = explode('/', $data['date']);
+            if (count($parts) === 3) {
+                $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+        }
+
+        $this->model->create($data);
+        header("Location: ?action=incomes");
+        exit;
+    }
+
+    // Editar ingreso
+    public function update($id, $data)
+    {
+        // Recuperar el registro actual
+        $existing = $this->model->findById($id);
+
+        // Si viene fecha en el formulario, convertirla al formato ISO
+        if (!empty($data['date'])) {
+            $parts = explode('/', $data['date']);
+            if (count($parts) === 3) {
+                $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+        } else {
+            // Si no viene fecha, conservar la original
+            $data['date'] = $existing['date'];
+        }
+
+
+        $this->model->update($id, $data);
+        header("Location: ?action=incomes");
+        exit;
+    }
+
+    // Eliminar ingreso (soft delete)
+    public function delete($id)
+    {
+        $this->model->softDelete($id);
+        header("Location: ?action=incomes");
+        exit;
+    }
+
+    // Exportar a Excel
+    public function exportXls()
+    {
+        $incomes = $this->model->getAll();
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=incomes.xls");
+
+        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\n";
+        foreach ($incomes as $income) {
+            echo "{$income['date']}\t{$income['description']}\t{$income['amount']}\t{$income['payment_method']}\t{$income['code']}\n";
+        }
+        exit;
+    }
+}
