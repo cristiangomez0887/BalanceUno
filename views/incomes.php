@@ -39,15 +39,20 @@
 </head>
 
 <body class="container">
+    <nav class="orange">
+        <div class="nav-wrapper center-align">
+            <h3 class="center-align white-text">
+                <i class="material-icons left">trending_up</i> Ingresos
+            </h3>
+        </div>
+    </nav>
+
 
     <!-- Card con tabla de ingresos -->
     <div class="card">
         <div class="card-content">
-            <h5 class="center-align teal-text">
-                <i class="material-icons left">trending_up</i> Ingresos
-            </h5>
             <div class="right-align">
-                <a href="#modalCreateIncome" class="btn teal modal-trigger">
+                <a href="#modalCreateIncome" class="btn orange modal-trigger ">
                     <i class="material-icons left">add</i> Nuevo Ingreso
                 </a>
                 <a href="?action=exportIncomesXls" class="btn green">
@@ -132,6 +137,7 @@
                         <option value="Efectivo">Efectivo</option>
                         <option value="Nequi">Nequi</option>
                         <option value="Transferencia">Transferencia</option>
+                        <option value="Prestamo">Prestamo</option>
                     </select>
                     <label>Método de pago</label>
                 </div>
@@ -258,7 +264,7 @@
             $('#modalEditIncome .modal-content form').on('submit', function() {
                 const val = $('#modal_payment_method').val();
                 $('#payment_method_hidden').val(val);
-                console.log("Enviando al backend:", val);
+
             });
 
 

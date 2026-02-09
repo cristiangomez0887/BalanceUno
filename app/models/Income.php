@@ -19,44 +19,28 @@ class Income
     // Crear ingreso
     public function create($data)
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO incomes (date, description, amount, payment_method, code)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        return $stmt->execute([
-            $data['date'],
-            $data['description'],
-            $data['amount'],
-            $data['payment_method'],
-            $data['code']
-        ]);
+        $stmt = $this->db->prepare("INSERT INTO incomes (date, description, amount, payment_method, code)
+            VALUES (:date, :description, :amount, :payment_method, :code)");
+        return $stmt->execute($data);
     }
 
     // Actualizar ingreso
     public function update($id, $data)
     {
-        $stmt = $this->db->prepare("
-            UPDATE incomes 
-            SET date = ?, description = ?, amount = ?, payment_method = ?, code = ?
-            WHERE id = ?
-        ");
-        return $stmt->execute([
-            $data['date'],
-            $data['description'],
-            $data['amount'],
-            $data['payment_method'],
-            $data['code'],
-            $id
-        ]);
+        $stmt = $this->db->prepare("UPDATE incomes 
+            SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
+            WHERE id = :id");
+        return $stmt->execute(array_merge($data, ['id' => $id]));
     }
 
     // Soft delete
     public function softDelete($id)
     {
-        $stmt = $this->db->prepare("UPDATE incomes SET deleted_at = NOW() WHERE id = ?");
-        return $stmt->execute([$id]);
+        $stmt = $this->db->prepare("UPDATE incomes SET deleted_at = NOW() WHERE id = :id");
+        return $stmt->execute(['id' => $id]);
     }
- 
+
+    // Buscar Ingreso por ID
     public function findById($id)
     {
         $stmt = $this->db->prepare("SELECT * FROM incomes WHERE id = :id AND deleted_at IS NULL");
