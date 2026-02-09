@@ -14,7 +14,7 @@ class Router
     {
         $this->db = Database::getConnection();
         $this->incomesController = new IncomesController($this->db);
-        // $this->expensesController = new ExpensesController($this->db);
+        $this->expensesController = new ExpensesController($this->db);
     }
 
     public function handleRequest($action)

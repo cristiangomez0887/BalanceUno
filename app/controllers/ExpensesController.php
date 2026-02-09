@@ -1,0 +1,77 @@
+<?php
+require_once __DIR__ . '/../models/Expense.php';
+
+class ExpensesController
+{
+    private $model;
+
+    public function __construct($db)
+    {
+        $this->model = new Expense($db);
+    }
+
+    // Listar gastos
+    public function index()
+    {
+        $expenses = $this->model->getAll();
+        include __DIR__ . '/../../views/expenses.php';
+    }
+
+    // Crear gasto
+    public function create($data)
+    {
+        if (empty($data['date'])) {
+            $data['date'] = date('Y-m-d'); // formato ISO
+        } else {
+            $parts = explode('/', $data['date']);
+            if (count($parts) === 3) {
+                $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+        }
+
+        $this->model->create($data);
+        header("Location: ?action=expenses");
+        exit;
+    }
+
+    // Editar gasto
+    public function update($id, $data)
+    {
+        $existing = $this->model->findById($id);
+
+        if (!empty($data['date'])) {
+            $parts = explode('/', $data['date']);
+            if (count($parts) === 3) {
+                $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
+            }
+        } else {
+            $data['date'] = $existing['date'];
+        }
+
+        $this->model->update($id, $data);
+        header("Location: ?action=expenses");
+        exit;
+    }
+
+    // Eliminar gasto (soft delete)
+    public function delete($id)
+    {
+        $this->model->softDelete($id);
+        header("Location: ?action=expenses");
+        exit;
+    }
+
+    // Exportar a Excel
+    public function exportXls()
+    {
+        $expenses = $this->model->getAll();
+        header("Content-Type: application/vnd.ms-excel");
+        header("Content-Disposition: attachment; filename=expenses.xls");
+
+        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\n";
+        foreach ($expenses as $expense) {
+            echo "{$expense['date']}\t{$expense['description']}\t{$expense['amount']}\t{$expense['payment_method']}\t{$expense['code']}\n";
+        }
+        exit;
+    }
+}
