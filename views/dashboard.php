@@ -9,47 +9,48 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../public/css/custom.css">
 </head>
 
 <body class="container">
 
     <!-- Barra superior con logo -->
-    <nav class="teal">
-        <div class="nav-wrapper center-align">
-            <a href="?action=dashboard" class="brand-logo">
-                <img src="assets/logo.png" alt="BalanceUno" style="height:50px; vertical-align:middle;">
-                BalanceUno
-            </a>
+    <nav class="primary-color">
+        <div class="nav-wrapper nav-app">
+            <div class="logo-app">
+                <img src="assets/logo.png" alt="BalanceUno" class="logo-img">
+                <span class="app-name">BalanceUno</span>
+            </div>
         </div>
     </nav>
 
     <!-- Botones grandes estilo app -->
     <div class="section center-align">
-        <a href="?action=incomes" class="btn-large waves-effect waves-light orange">
+        <a href="?action=incomes" class="btn-large waves-effect waves-light secondary-color">
             <i class="material-icons left">trending_up</i> Ingresos
         </a>
     </div>
 
     <div class="section center-align">
-        <a href="?action=expenses" class="btn-large waves-effect waves-light red">
+        <a href="?action=expenses" class="btn-large waves-effect waves-light error-color">
             <i class="material-icons left">trending_down</i> Gastos
         </a>
     </div>
 
     <div class="section center-align">
-        <a href="?action=movements" class="btn-large waves-effect waves-light grey darken-1">
-            <i class="material-icons left">list</i> Movimientos
+        <a href="?action=balance" class="btn-large waves-effect waves-light accent-color">
+            <i class="material-icons left">assessment</i> Balance
         </a>
     </div>
 
     <div class="section center-align">
-        <a href="?action=reports" class="btn-large waves-effect waves-light blue">
+        <a href="?action=reports" class="btn-large waves-effect waves-light reports-color">
             <i class="material-icons left">bar_chart</i> Reportes
         </a>
     </div>
 
     <!-- Footer -->
-    <footer class="page-footer teal">
+    <footer class="page-footer primary-color">
         <div class="container center-align">
             © 2026 BalanceUno — Hecho con amor 💙
         </div>

@@ -1,0 +1,149 @@
+/* Paleta profesional */
+
+/* Azul petróleo */
+.primary-color {
+    background-color: #00695c !important;
+}
+
+/* Naranja ingresos */
+.secondary-color {
+    background-color: #fb8c00 !important;
+}
+
+/* Rojo gastos */
+.error-color {
+    background-color: #e53935 !important;
+}
+
+/* verde balance */
+.accent-color {
+    background-color: #43a047 !important;
+}
+
+/* Azul reportes */
+.reports-color {
+    background-color: #1e88e5 !important;
+}
+
+.secondary-color-text {
+    color: #fb8c00 !important;
+}
+
+.error-color-text {
+    color: #e53935 !important;
+}
+
+.accent-color-text {
+    color: #43a047 !important;
+}
+
+.reports-color-text {
+    color: #1e88e5 !important;
+}
+
+
+/* Logo y nombre */
+
+/* Barra estilo app */
+.nav-app {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Centra el contenido */
+    position: relative;
+    padding: 0 12px;
+}
+
+/* Logo + nombre */
+.logo-app {
+    display: flex;
+    align-items: center;
+    /* Alinea verticalmente logo y texto */
+    gap: 10px;
+}
+
+.logo-img {
+    height: 50px;
+    display: block;
+}
+
+.app-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #fff;
+    line-height: 50px;
+    /* Igual altura que el logo */
+}
+
+.btn-back {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-back i {
+    font-size: 32px;
+}
+
+.title-app {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.title-app i {
+    font-size: 42px;
+    color: #fff;
+}
+
+.title-app h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #fff;
+}
+
+/* Cards de totales */
+.totals-row .card-panel {
+    font-size: 1.2rem;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+/* Ajustes responsive */
+@media (max-width: 480px) {
+    .title-app h3 {
+        font-size: 1.4rem;
+    }
+
+    .title-app i {
+        font-size: 32px;
+    }
+
+    .totals-row .card-panel {
+        font-size: 1rem;
+        padding: 12px;
+    }
+}
+
+/* Botones de acción */
+.action-btn {
+    margin: 5px;
+    /* Espacio entre botones */
+}
+
+/* En móviles los botones ocupan todo el ancho */
+@media (max-width: 480px) {
+    .action-btn {
+        display: block;
+        width: 100%;
+        margin: 8px 0;
+        /* Separación vertical */
+        text-align: center;
+    }
+}

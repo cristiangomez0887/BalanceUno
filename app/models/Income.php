@@ -30,7 +30,8 @@ class Income
         $stmt = $this->db->prepare("UPDATE incomes 
             SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
             WHERE id = :id");
-        return $stmt->execute(array_merge($data, ['id' => $id]));
+        $data['id'] = $id; // Agregar el ID al array de datos para la consulta
+        return $stmt->execute($data);
     }
 
     // Soft delete

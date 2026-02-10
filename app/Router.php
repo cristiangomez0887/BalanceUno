@@ -2,6 +2,7 @@
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/controllers/IncomesController.php';
 require_once __DIR__ . '/controllers/ExpensesController.php';
+require_once __DIR__ . '/controllers/BalanceController.php';
 // Aquí luego añadimos MovementsController y ReportsController
 
 class Router
@@ -9,12 +10,14 @@ class Router
     private $db;
     private $incomesController;
     private $expensesController;
+    private $balanceController;
 
     public function __construct()
     {
         $this->db = Database::getConnection();
         $this->incomesController = new IncomesController($this->db);
         $this->expensesController = new ExpensesController($this->db);
+        $this->balanceController = new BalanceController($this->db);
     }
 
     public function handleRequest($action)
@@ -52,6 +55,13 @@ class Router
                 $this->expensesController->exportXls();
                 break;
 
+            // Balance
+            case 'balance':
+                $this->balanceController->index();
+                break;
+            case 'exportBalanceXls':
+                $this->balanceController->exportXls();
+                break;
             default:
                 include __DIR__ . '/../views/dashboard.php';
                 break;

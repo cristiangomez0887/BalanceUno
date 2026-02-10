@@ -9,6 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -39,23 +40,30 @@
 </head>
 
 <body class="container">
-    <nav class="orange">
-        <div class="nav-wrapper center-align">
-            <h3 class="center-align white-text">
-                <i class="material-icons left">trending_up</i> Ingresos
-            </h3>
+    <!-- Barra superior -->
+    <nav class="secondary-color">
+        <div class="nav-wrapper nav-app">
+            <!-- Botón atrás -->
+            <a href="?action=dashboard" class="btn-back">
+                <i class="material-icons">arrow_back</i>
+            </a>
+
+            <!-- Título con icono -->
+            <div class="title-app">
+                <i class="material-icons">trending_up</i>
+                <h3>Ingresos</h3>
+            </div>
         </div>
     </nav>
-
 
     <!-- Card con tabla de ingresos -->
     <div class="card">
         <div class="card-content">
             <div class="right-align">
-                <a href="#modalCreateIncome" class="btn orange modal-trigger ">
+                <a href="#modalCreateIncome" class="btn secondary-color modal-trigger action-btn">
                     <i class="material-icons left">add</i> Nuevo Ingreso
                 </a>
-                <a href="?action=exportIncomesXls" class="btn green">
+                <a href="?action=exportIncomesXls" class="btn reports-color action-btn">
                     <i class="material-icons left">file_download</i> Exportar XLS
                 </a>
             </div>
@@ -64,7 +72,7 @@
                     <tr>
                         <th>Fecha</th>
                         <th>Descripción</th>
-                        <th>Monto</th>
+                        <th class="col-monto">Monto</th>
                         <th>Método</th>
                         <th>Código</th>
                         <th>Acciones</th>
@@ -115,7 +123,7 @@
     <!-- Modal Crear Ingreso -->
     <div id="modalCreateIncome" class="modal">
         <div class="modal-content">
-            <h5 class="center-align teal-text">
+            <h5 class="center-align secondary-color-text">
                 <i class="material-icons left">add</i> Nuevo Ingreso
             </h5>
             <form method="POST" action="?action=createIncome">
@@ -146,7 +154,7 @@
                     <label>Código (Nequi o Transferencia)</label>
                 </div>
                 <div class="center-align">
-                    <button type="submit" class="btn teal">Guardar</button>
+                    <button type="submit" class="btn secondary-color">Guardar</button>
                     <a href="#!" class="modal-close btn grey">Cancelar</a>
                 </div>
             </form>
@@ -156,7 +164,7 @@
     <!-- Modal Editar Ingreso -->
     <div id="modalEditIncome" class="modal">
         <div class="modal-content">
-            <h5 class="center-align teal-text">
+            <h5 class="center-align secondary-color-text">
                 <i class="material-icons left">edit</i> Editar Ingreso
             </h5>
             <form method="POST" action="?action=updateIncome">
@@ -197,7 +205,7 @@
                 </div>
 
                 <div class="center-align">
-                    <button type="submit" class="btn teal">Actualizar</button>
+                    <button type="submit" class="btn secondary-color">Actualizar</button>
                     <a href="#!" class="modal-close btn grey">Cancelar</a>
                 </div>
             </form>
@@ -205,10 +213,8 @@
     </div>
 
 
-
-
     <!-- Footer -->
-    <footer class="page-footer teal">
+    <footer class="page-footer primary-color">
         <div class="container center-align">
             © 2026 BalanceUno — Hecho con amor 💙
         </div>
@@ -219,100 +225,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            // Tooltips
-            $('.tooltipped').tooltip();
-            //inicializar selects
-            $('select').formSelect();
-            // Inicializar modales
-            $('.modal').modal({
-                onOpenStart: function(modal, trigger) {
-                    //evitar que los datos carguen al mismo tiempo que los labels, lo que hace que se oculten
-                    setTimeout(function() {
-                        M.updateTextFields();
-                    }, 100);
-
-                    if (modal.id === 'modalEditIncome') {
-                        // Obtener datos del botón
-                        var id = $(trigger).data('id');
-                        var date = $(trigger).data('date');
-                        var description = $(trigger).data('description');
-                        var amount = $(trigger).data('amount');
-                        var payment_method = $(trigger).data('payment_method');
-                        var code = $(trigger).data('code');
-
-                        // Rellenar el formulario
-                        $('#modalEditIncome input[name="id"]').val(id);
-                        $('#modalEditIncome input[name="date"]').val(date);
-                        $('#modalEditIncome input[name="description"]').val(description);
-                        $('#modalEditIncome input[name="amount"]').val(amount);
-                        // 👇 Truco: marcar el option correcto ANTES de refrescar
-                        $('#modal_payment_method option').prop('selected', false); // limpiar
-                        $('#modal_payment_method option[value="' + payment_method + '"]').prop('selected', true);
-
-                        // Refrescar Materialize
-                        $('#modal_payment_method').formSelect();
-
-                        $('#modalEditIncome input[name="code"]').val(code);
-                    }
-                }
-            });
-
-            // Antes de enviar, copiar el valor del select al hidden
-            $('#modalEditIncome .modal-content form').on('submit', function() {
-                const val = $('#modal_payment_method').val();
-                $('#payment_method_hidden').val(val);
-
-            });
-
-
-            // Inicializar datepicker
-            $('.datepicker').datepicker({
-                format: 'dd/mm/yyyy',
-                autoClose: true,
-                container: 'body',
-                i18n: {
-                    months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                    monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                    weekdays: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-                    weekdaysShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
-                    weekdaysAbbrev: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-                    cancel: 'Cancelar',
-                    clear: 'Limpiar',
-                    done: 'Aceptar'
-                }
-            });
-
-            // Inicializar DataTable
-            $('#incomesTable').DataTable({
-                responsive: true,
-                pageLength: 10,
-                dom: 'frtip', // sin selector de cantidad de registros
-                language: {
-                    url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: 0,
-                        className: 'dt-body-center'
-                    }, // Fecha
-                    {
-                        responsivePriority: 2,
-                        targets: 2,
-                        className: 'dt-body-right'
-                    }, // Monto
-                    {
-                        responsivePriority: 3,
-                        targets: -1,
-                        orderable: false,
-                        searchable: false,
-                    } // Acciones
-                ]
-            });
-        });
-    </script>
+    <script src="../public/js/init.js"></script>
 </body>
 
 </html>
