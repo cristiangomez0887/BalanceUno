@@ -1,10 +1,10 @@
 <?php
 class Database
 {
-    private static $host = "sql311.infinityfree.com";
-    private static $db_name = "if0_41136129_balance_uno";
-    private static $username = "if0_41136129";
-    private static $password = "Cristian0887";
+    private static $host = "localhost";
+    private static $db_name = "balance_uno";
+    private static $username = "root";
+    private static $password = "";
     private static $conn;
 
     public static function getConnection()
