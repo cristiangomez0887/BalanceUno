@@ -12,7 +12,6 @@
     <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <link rel="stylesheet" href="../public/css/custom.css">
     <style>
         /* Ajuste general: modal más alto y scroll interno */
@@ -55,7 +54,6 @@
             </div>
         </div>
     </nav>
-
     <!-- Card con tabla de ingresos -->
     <div class="card">
         <div class="card-content">
@@ -119,7 +117,6 @@
             </table>
         </div>
     </div>
-
     <!-- Modal Crear Ingreso -->
     <div id="modalCreateIncome" class="modal">
         <div class="modal-content">
@@ -145,12 +142,11 @@
                         <option value="Efectivo">Efectivo</option>
                         <option value="Nequi">Nequi</option>
                         <option value="Transferencia">Transferencia</option>
-                        <option value="Prestamo">Prestamo</option>
                     </select>
                     <label>Método de pago</label>
                 </div>
-                <div class="input-field">
-                    <input type="text" name="code">
+                <div class="input-field" style="z-index: 99 !important;">
+                    <input type="text" name="code" style="z-index: 99 !important;">
                     <label>Código (Nequi o Transferencia)</label>
                 </div>
                 <div class="center-align">
@@ -160,7 +156,6 @@
             </form>
         </div>
     </div>
-
     <!-- Modal Editar Ingreso -->
     <div id="modalEditIncome" class="modal">
         <div class="modal-content">
@@ -169,25 +164,20 @@
             </h5>
             <form method="POST" action="?action=updateIncome">
                 <input type="hidden" name="id">
-
                 <div class="input-field">
                     <input type="text" class="datepicker" name="date" required>
                     <label class="active">Fecha</label>
                 </div>
-
                 <div class="input-field">
                     <input type="text" name="description" required>
                     <label class="active">Descripción</label>
                 </div>
-
                 <div class="input-field">
                     <input type="number" name="amount" step="0.01" required>
                     <label class="active">Monto (COP)</label>
                 </div>
-
                 <!-- Hidden que sí se envía -->
                 <input type="hidden" name="payment_method" id="payment_method_hidden">
-
                 <div class="input-field">
                     <select id="modal_payment_method" required>
                         <option value="" disabled>Elige método</option>
@@ -197,13 +187,10 @@
                     </select>
                     <label>Método de pago</label>
                 </div>
-
-
-                <div class="input-field">
-                    <input type="text" name="code">
+                <div class="input-field" style="z-index: 99 !important;">
+                    <input type="text" name="code" style="z-index: 99 !important;">
                     <label class="active">Código (Nequi o Transferencia)</label>
                 </div>
-
                 <div class="center-align">
                     <button type="submit" class="btn secondary-color">Actualizar</button>
                     <a href="#!" class="modal-close btn grey">Cancelar</a>
@@ -211,15 +198,12 @@
             </form>
         </div>
     </div>
-
-
     <!-- Footer -->
     <footer class="page-footer primary-color">
         <div class="container center-align">
-            © 2026 BalanceUno — Hecho con amor 💙
+            © 2026 BalanceUno — Hecho con ❤️
         </div>
     </footer>
-
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

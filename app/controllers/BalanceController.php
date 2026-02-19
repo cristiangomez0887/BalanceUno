@@ -1,21 +1,36 @@
 <?php
 require_once __DIR__ . '/../models/Balance.php';
 
-class BalanceController {
+class BalanceController
+{
     private $model;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->model = new Balance($db);
     }
 
-    public function index() {
-        $startDate = $_POST['startDate'] ?? date('Y-m-01');
-        $endDate = $_POST['endDate'] ?? date('Y-m-t');
+    public function index($filters = [])
+    {
+        $startDateInput = $_POST['startDate'] ?? null;
+        $endDateInput   = $_POST['endDate'] ?? null;
+
+        if ($startDateInput && $endDateInput) {
+            $startDate = DateTime::createFromFormat('d/m/Y', $startDateInput)->format('Y-m-d');
+            $endDate   = DateTime::createFromFormat('d/m/Y', $endDateInput)->format('Y-m-d');
+        } else {
+            // Por defecto: solo la fecha actual
+            $today = date('Y-m-d');
+            $startDate = $today;
+            $endDate   = $today;
+        }
+
         $data = $this->model->getData($startDate, $endDate);
         include __DIR__ . '/../../views/balance.php';
     }
 
-    public function exportXls() {
+    public function exportXls()
+    {
         $startDate = $_POST['startDate'] ?? date('Y-m-01');
         $endDate = $_POST['endDate'] ?? date('Y-m-t');
         $data = $this->model->getData($startDate, $endDate);

@@ -1,12 +1,14 @@
 <?php
-class Database {
-    private static $host = "localhost";
-    private static $db_name = "balanceuno";
-    private static $username = "root";
-    private static $password = "";
+class Database
+{
+    private static $host = "sql311.infinityfree.com";
+    private static $db_name = "if0_41136129_balance_uno";
+    private static $username = "if0_41136129";
+    private static $password = "Cristian0887";
     private static $conn;
 
-    public static function getConnection() {
+    public static function getConnection()
+    {
         if (self::$conn == null) {
             try {
                 self::$conn = new PDO(

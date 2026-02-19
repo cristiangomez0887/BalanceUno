@@ -3,7 +3,8 @@ require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/controllers/IncomesController.php';
 require_once __DIR__ . '/controllers/ExpensesController.php';
 require_once __DIR__ . '/controllers/BalanceController.php';
-// Aquí luego añadimos MovementsController y ReportsController
+require_once __DIR__ . '/controllers/ReportsController.php';
+
 
 class Router
 {
@@ -11,6 +12,7 @@ class Router
     private $incomesController;
     private $expensesController;
     private $balanceController;
+    private $reportsController;
 
     public function __construct()
     {
@@ -18,6 +20,7 @@ class Router
         $this->incomesController = new IncomesController($this->db);
         $this->expensesController = new ExpensesController($this->db);
         $this->balanceController = new BalanceController($this->db);
+        $this->reportsController = new ReportsController($this->db);
     }
 
     public function handleRequest($action)
@@ -30,6 +33,7 @@ class Router
                 $this->incomesController->create($_POST);
                 break;
             case 'updateIncome':
+                exit;
                 $this->incomesController->update($_POST['id'], $_POST);
                 break;
             case 'deleteIncome':
@@ -54,13 +58,17 @@ class Router
             case 'exportExpensesXls':
                 $this->expensesController->exportXls();
                 break;
-
-            // Balance
             case 'balance':
-                $this->balanceController->index();
+                $this->balanceController->index($_POST);
                 break;
             case 'exportBalanceXls':
-                $this->balanceController->exportXls();
+                $this->balanceController->exportXls($_POST);
+                break;
+            case 'reports':
+                $this->reportsController->index($_POST);
+                break;
+            case 'exportReportsXls':
+                $this->reportsController->exportXls($_POST);
                 break;
             default:
                 include __DIR__ . '/../views/dashboard.php';

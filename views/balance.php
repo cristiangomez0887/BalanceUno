@@ -37,18 +37,18 @@
             <!-- Formulario de fechas -->
             <form method="POST" action="?action=balance" class="row">
                 <div class="input-field col s12 m6">
-                    <input type="date" name="startDate" value="<?= htmlspecialchars($_POST['startDate'] ?? '') ?>">
+                    <input type="text" id="startDate" name="startDate" value="<?= htmlspecialchars($filters['startDate'] ?? date('d/m/Y')) ?>">
                     <label for="startDate">Fecha inicio</label>
                 </div>
                 <div class="input-field col s12 m6">
-                    <input type="date" name="endDate" value="<?= htmlspecialchars($_POST['endDate'] ?? '') ?>">
+                    <input type="text" id="endDate" name="endDate" value="<?= htmlspecialchars($filters['endDate'] ?? date('d/m/Y')) ?>">
                     <label for="endDate">Fecha fin</label>
                 </div>
-                <button class="btn secondary-color waves-effect waves-light action-btn" type="submit">
+                <button class="btn accent-color waves-effect waves-light action-btn" type="submit">
                     <i class="material-icons left">search</i> Generar Balance
                 </button>
 
-                <button class="btn reports-color waves-effect waves-light action-btn" type="submit" formaction="?action=exportBalanceXls">
+                <button class="btn green waves-effect waves-light action-btn" type="submit" formaction="?action=exportBalanceXls">
                     <i class="material-icons left">file_download</i> Exportar XLS
                 </button>
 
@@ -75,14 +75,30 @@
 
             <!-- Distribución por método de pago -->
             <h5 class="teal-text"><i class="material-icons left">payment</i> Distribución por método de pago</h5>
-            <ul class="collection">
-                <?php foreach ($data['paymentSummary'] as $method => $value): ?>
-                    <li class="collection-item">
-                        <strong><?= htmlspecialchars($method) ?>:</strong>
-                        $<?= number_format($value, 0, ",", ".") ?> COP
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <div class="row">
+                <div class="col s12 m6">
+                    <h6 class="secondary-color-text"><i class="material-icons left">arrow_upward</i> Ingresos</h6>
+                    <ul class="collection">
+                        <?php foreach ($data['paymentSummary']['Ingresos'] as $method => $value): ?>
+                            <li class="collection-item">
+                                <strong><?= htmlspecialchars($method) ?>:</strong>
+                                $<?= number_format($value, 0, ",", ".") ?> COP
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <div class="col s12 m6">
+                    <h6 class="error-color-text"><i class="material-icons left">arrow_downward</i> Gastos</h6>
+                    <ul class="collection">
+                        <?php foreach ($data['paymentSummary']['Gastos'] as $method => $value): ?>
+                            <li class="collection-item">
+                                <strong><?= htmlspecialchars($method) ?>:</strong>
+                                $<?= number_format($value, 0, ",", ".") ?> COP
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            </div>
 
             <!-- Top 5 Ingresos -->
             <h5 class="secondary-color-text"><i class="material-icons left">trending_up</i> Top 5 Ingresos</h5>
@@ -166,7 +182,7 @@
     <!-- Footer -->
     <footer class="page-footer primary-color">
         <div class="container center-align">
-            © 2026 BalanceUno — Hecho con amor 💙
+             © 2026 BalanceUno — Hecho con ❤️
         </div>
     </footer>
 

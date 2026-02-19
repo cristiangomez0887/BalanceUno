@@ -1,12 +1,15 @@
 <?php
-class Balance {
+class Balance
+{
     private $db;
 
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
-    public function getData($startDate, $endDate) {
+    public function getData($startDate, $endDate)
+    {
         // Ingresos
         $stmt = $this->db->prepare("SELECT * FROM incomes WHERE date BETWEEN :start AND :end AND deleted_at IS NULL");
         $stmt->execute([':start' => $startDate, ':end' => $endDate]);
@@ -23,13 +26,23 @@ class Balance {
         $netBalance = $totalIncomes - $totalExpenses;
 
         // Distribución por método de pago
-        $paymentSummary = [];
+        $paymentSummary = [
+            'Ingresos' => [],
+            'Gastos' => []
+        ];
+
         foreach ($incomes as $income) {
-            $paymentSummary[$income['payment_method']] = ($paymentSummary[$income['payment_method']] ?? 0) + $income['amount'];
+            $method = $income['payment_method'];
+            $paymentSummary['Ingresos'][$method] =
+                ($paymentSummary['Ingresos'][$method] ?? 0) + $income['amount'];
         }
+
         foreach ($expenses as $expense) {
-            $paymentSummary[$expense['payment_method']] = ($paymentSummary[$expense['payment_method']] ?? 0) - $expense['amount'];
+            $method = $expense['payment_method'];
+            $paymentSummary['Gastos'][$method] =
+                ($paymentSummary['Gastos'][$method] ?? 0) + $expense['amount'];
         }
+
 
         // Top 5 ingresos
         $topIncomes = $incomes;
