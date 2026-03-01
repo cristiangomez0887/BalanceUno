@@ -15,7 +15,21 @@ body.container {
     display: flex;
     /* opcional: para centrar contenido */
     flex-direction: column;
+    height: 100vh;
+    min-height: 100hv;
+
 }
+
+#main {
+    flex: 1;
+}
+
+
+footer {
+  margin-top: auto; /* se pega al fondo */
+}
+
+
 
 /* Azul petróleo */
 .primary-color {

@@ -37,6 +37,7 @@
         }
     </style>
 </head>
+
 <body class="container">
     <!-- Barra superior -->
     <nav class="error-color">
@@ -52,69 +53,77 @@
             </div>
         </div>
     </nav>
-    <!-- Card con tabla de ingresos -->
-    <div class="card">
-        <div class="card-content">
-            <div class="right-align">
-                <a href="#modalCreateExpense" class="btn error-color modal-trigger action-btn">
-                    <i class="material-icons left">add</i> Nuevo Gasto
-                </a>
-                <a href="?action=exportExpensesXls" class="btn reports-color action-btn">
-                    <i class="material-icons left">file_download</i> Exportar XLS
-                </a>
-            </div>
-            <table id="expensesTable" class="striped display nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Descripción</th>
-                        <th>Monto</th>
-                        <th>Método</th>
-                        <th>Código</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($expenses as $expense): ?>
+    <section id="main">
+        <!-- Card con tabla de ingresos -->
+        <div class="card">
+            <div class="card-content">
+                <div class="right-align">
+                    <a href="#modalCreateExpense" class="btn error-color modal-trigger action-btn">
+                        <i class="material-icons left">add</i> Nuevo Gasto
+                    </a>
+                    <a href="?action=exportExpensesXls" class="btn reports-color action-btn">
+                        <i class="material-icons left">file_download</i> Exportar XLS
+                    </a>
+                </div>
+                <table id="expensesTable" class="striped display nowrap" style="width:100%">
+                    <thead>
                         <tr>
-                            <td><?= date('d/m/Y', strtotime($expense['date'])) ?></td>
-                            <td><?= htmlspecialchars($expense['description']) ?></td>
-                            <td>$<?= number_format($expense['amount'], 0, ",", ".") ?> COP</td>
-                            <td><?= htmlspecialchars($expense['payment_method']) ?></td>
-                            <td><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
-                            <td>
-                                <a href="#modalEditExpense" class="btn-small blue modal-trigger"
-                                    data-id="<?= $expense['id'] ?>
-                                    " data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
-                                    data-description="<?= htmlspecialchars($expense['description']) ?>"
-                                    data-amount="<?= htmlspecialchars($expense['amount']) ?>"
-                                    data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
-                                    data-code="<?= htmlspecialchars($expense['code']) ?>">
-                                    <i class="material-icons">edit</i>
-                                </a>
-                                <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-small error-color modal-trigger">
-                                    <i class="material-icons">delete</i>
-                                </a>
-                            </td>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Método</th>
+                            <th>Código</th>
+                            <th>Acciones</th>
                         </tr>
-                        <div id="modalDeleteExpense<?= $expense['id'] ?>" class="modal">
-                            <div class="modal-content center-align">
-                                <h5 class="error-color-text">
-                                    <i class="material-icons left">delete</i> Eliminar Gasto
-                                </h5>
-                                <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($expense['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($expense['date'])) ?></strong>?</p>
-                                <form method="POST" action="?action=deleteExpense">
-                                    <input type="hidden" name="id" value="<?= $expense['id'] ?>">
-                                    <button type="submit" class="btn error-color">Eliminar</button>
-                                    <a href="#!" class="modal-close btn grey">Cancelar</a>
-                                </form>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($expenses as $expense): ?>
+                            <tr>
+                                <td><?= date('d/m/Y', strtotime($expense['date'])) ?></td>
+                                <td><?= htmlspecialchars($expense['description']) ?></td>
+                                <td>$<?= number_format($expense['amount'], 0, ",", ".") ?> COP</td>
+                                <td><?= htmlspecialchars($expense['payment_method']) ?></td>
+                                <td><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
+                                <td>
+                                    <a href="#modalEditExpense" class="btn-small blue modal-trigger"
+                                        data-id="<?= $expense['id'] ?>
+                                    " data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
+                                        data-description="<?= htmlspecialchars($expense['description']) ?>"
+                                        data-amount="<?= htmlspecialchars($expense['amount']) ?>"
+                                        data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
+                                        data-code="<?= htmlspecialchars($expense['code']) ?>">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                    <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-small error-color modal-trigger">
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <div id="modalDeleteExpense<?= $expense['id'] ?>" class="modal">
+                                <div class="modal-content center-align">
+                                    <h5 class="error-color-text">
+                                        <i class="material-icons left">delete</i> Eliminar Gasto
+                                    </h5>
+                                    <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($expense['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($expense['date'])) ?></strong>?</p>
+                                    <form method="POST" action="?action=deleteExpense">
+                                        <input type="hidden" name="id" value="<?= $expense['id'] ?>">
+                                        <button type="submit" class="btn error-color">Eliminar</button>
+                                        <a href="#!" class="modal-close btn grey">Cancelar</a>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </section>
+    <!-- Footer -->
+    <footer class="page-footer primary-color">
+        <div class="container center-align">
+            © 2026 BalanceUno — Hecho con ❤️
+        </div>
+    </footer>
     <!-- Modal Crear Gasto -->
     <div id="modalCreateExpense" class="modal">
         <div class="modal-content">
@@ -131,7 +140,7 @@
                     <label>Descripción</label>
                 </div>
                 <div class="input-field">
-                    <input type="number" name="amount" step="0.01" required>
+                    <input type="text" name="amount" required>
                     <label>Monto (COP)</label>
                 </div>
                 <div class="input-field">
@@ -171,7 +180,7 @@
                     <label class="active">Descripción</label>
                 </div>
                 <div class="input-field">
-                    <input type="number" name="amount" step="0.01" required>
+                    <input type="text" name="amount" required>
                     <label class="active">Monto (COP)</label>
                 </div>
                 <!-- Hidden que sí se envía -->
@@ -196,12 +205,7 @@
             </form>
         </div>
     </div>
-    <!-- Footer -->
-    <footer class="page-footer primary-color">
-        <div class="container center-align">
-            © 2026 BalanceUno — Hecho con ❤️
-        </div>
-    </footer>
+
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

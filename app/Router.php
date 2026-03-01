@@ -33,7 +33,6 @@ class Router
                 $this->incomesController->create($_POST);
                 break;
             case 'updateIncome':
-                exit;
                 $this->incomesController->update($_POST['id'], $_POST);
                 break;
             case 'deleteIncome':
@@ -42,7 +41,6 @@ class Router
             case 'exportIncomesXls':
                 $this->incomesController->exportXls();
                 break;
-
             case 'expenses':
                 $this->expensesController->index();
                 break;

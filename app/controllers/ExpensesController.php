@@ -29,6 +29,16 @@ class ExpensesController
             }
         }
 
+        // Recibir datos del formulario
+        $amount = $data['amount'];
+
+        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
+        $amount = str_replace('.', '', $amount);
+        $amount = str_replace(',', '.', $amount);
+
+        // Convertir a número
+        $data['amount'] = (float) $amount;
+
         $this->model->create($data);
         header("Location: ?action=expenses");
         exit;
@@ -47,6 +57,16 @@ class ExpensesController
         } else {
             $data['date'] = $existing['date'];
         }
+
+        // Recibir datos del formulario
+        $amount = $data['amount'];
+
+        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
+        $amount = str_replace('.', '', $amount);
+        $amount = str_replace(',', '.', $amount);
+
+        // Convertir a número
+        $data['amount'] = (float) $amount;
 
         $this->model->update($id, $data);
         header("Location: ?action=expenses");

@@ -54,69 +54,77 @@
             </div>
         </div>
     </nav>
-    <!-- Card con tabla de ingresos -->
-    <div class="card">
-        <div class="card-content">
-            <div class="right-align">
-                <a href="#modalCreateIncome" class="btn secondary-color modal-trigger action-btn">
-                    <i class="material-icons left">add</i> Nuevo Ingreso
-                </a>
-                <a href="?action=exportIncomesXls" class="btn reports-color action-btn">
-                    <i class="material-icons left">file_download</i> Exportar XLS
-                </a>
-            </div>
-            <table id="incomesTable" class="striped display nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Descripción</th>
-                        <th class="col-monto">Monto</th>
-                        <th>Método</th>
-                        <th>Código</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($incomes as $income): ?>
+    <section id="main">
+        <!-- Card con tabla de ingresos -->
+        <div class="card">
+            <div class="card-content">
+                <div class="right-align">
+                    <a href="#modalCreateIncome" class="btn secondary-color modal-trigger action-btn">
+                        <i class="material-icons left">add</i> Nuevo Ingreso
+                    </a>
+                    <a href="?action=exportIncomesXls" class="btn reports-color action-btn">
+                        <i class="material-icons left">file_download</i> Exportar XLS
+                    </a>
+                </div>
+                <table id="incomesTable" class="striped display nowrap" style="width:100%">
+                    <thead>
                         <tr>
-                            <td><?= date('d/m/Y', strtotime($income['date'])) ?></td>
-                            <td><?= htmlspecialchars($income['description']) ?></td>
-                            <td>$<?= number_format($income['amount'], 0, ",", ".") ?> COP</td>
-                            <td><?= htmlspecialchars($income['payment_method']) ?></td>
-                            <td><?= $income['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($income['code']) ?></td>
-                            <td>
-                                <a href="#modalEditIncome" class="btn-small blue modal-trigger"
-                                    data-id="<?= $income['id'] ?>
-                                    " data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
-                                    data-description="<?= htmlspecialchars($income['description']) ?>"
-                                    data-amount="<?= htmlspecialchars($income['amount']) ?>"
-                                    data-payment_method="<?= htmlspecialchars($income['payment_method']) ?>"
-                                    data-code="<?= htmlspecialchars($income['code']) ?>">
-                                    <i class="material-icons">edit</i>
-                                </a>
-                                <a href="#modalDeleteIncome<?= $income['id'] ?>" class="btn-small red modal-trigger">
-                                    <i class="material-icons">delete</i>
-                                </a>
-                            </td>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th class="col-monto">Monto</th>
+                            <th>Método</th>
+                            <th>Código</th>
+                            <th>Acciones</th>
                         </tr>
-                        <div id="modalDeleteIncome<?= $income['id'] ?>" class="modal">
-                            <div class="modal-content center-align">
-                                <h5 class="red-text">
-                                    <i class="material-icons left">delete</i> Eliminar Ingreso
-                                </h5>
-                                <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($income['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($income['date'])) ?></strong>?</p>
-                                <form method="POST" action="?action=deleteIncome">
-                                    <input type="hidden" name="id" value="<?= $income['id'] ?>">
-                                    <button type="submit" class="btn red">Eliminar</button>
-                                    <a href="#!" class="modal-close btn grey">Cancelar</a>
-                                </form>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($incomes as $income): ?>
+                            <tr>
+                                <td><?= date('d/m/Y', strtotime($income['date'])) ?></td>
+                                <td><?= htmlspecialchars($income['description']) ?></td>
+                                <td>$<?= number_format($income['amount'], 0, ",", ".") ?> COP</td>
+                                <td><?= htmlspecialchars($income['payment_method']) ?></td>
+                                <td><?= $income['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($income['code']) ?></td>
+                                <td>
+                                    <a href="#modalEditIncome" class="btn-small blue modal-trigger"
+                                        data-id="<?= $income['id'] ?>
+                                    " data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
+                                        data-description="<?= htmlspecialchars($income['description']) ?>"
+                                        data-amount="<?= htmlspecialchars($income['amount']) ?>"
+                                        data-payment_method="<?= htmlspecialchars($income['payment_method']) ?>"
+                                        data-code="<?= htmlspecialchars($income['code']) ?>">
+                                        <i class="material-icons">edit</i>
+                                    </a>
+                                    <a href="#modalDeleteIncome<?= $income['id'] ?>" class="btn-small red modal-trigger">
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <div id="modalDeleteIncome<?= $income['id'] ?>" class="modal">
+                                <div class="modal-content center-align">
+                                    <h5 class="red-text">
+                                        <i class="material-icons left">delete</i> Eliminar Ingreso
+                                    </h5>
+                                    <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($income['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($income['date'])) ?></strong>?</p>
+                                    <form method="POST" action="?action=deleteIncome">
+                                        <input type="hidden" name="id" value="<?= $income['id'] ?>">
+                                        <button type="submit" class="btn red">Eliminar</button>
+                                        <a href="#!" class="modal-close btn grey">Cancelar</a>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </section>
+    <!-- Footer -->
+    <footer class="page-footer primary-color">
+        <div class="container center-align">
+            © 2026 BalanceUno — Hecho con ❤️
+        </div>
+    </footer>
     <!-- Modal Crear Ingreso -->
     <div id="modalCreateIncome" class="modal">
         <div class="modal-content">
@@ -133,7 +141,7 @@
                     <label>Descripción</label>
                 </div>
                 <div class="input-field">
-                    <input type="number" name="amount" step="0.01" required>
+                    <input type="text" name="amount" required>
                     <label>Monto (COP)</label>
                 </div>
                 <div class="input-field">
@@ -173,7 +181,7 @@
                     <label class="active">Descripción</label>
                 </div>
                 <div class="input-field">
-                    <input type="number" name="amount" step="0.01" required>
+                    <input type="text" name="amount" required>
                     <label class="active">Monto (COP)</label>
                 </div>
                 <!-- Hidden que sí se envía -->
@@ -198,12 +206,7 @@
             </form>
         </div>
     </div>
-    <!-- Footer -->
-    <footer class="page-footer primary-color">
-        <div class="container center-align">
-            © 2026 BalanceUno — Hecho con ❤️
-        </div>
-    </footer>
+
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>

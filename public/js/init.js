@@ -43,7 +43,7 @@ $(document).ready(function () {
         dom: 'frtip', // sin selector de cantidad de registros
         order: [[0, 'desc']], // ordenar por fecha descendente
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         },
         columnDefs: [{
             responsivePriority: 1,
@@ -69,7 +69,7 @@ $(document).ready(function () {
         pageLength: 10,
         dom: 'frtip', // sin selector de cantidad de registros
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         },
         columnDefs: [{
             responsivePriority: 1,
@@ -95,7 +95,7 @@ $(document).ready(function () {
         pageLength: 10,
         dom: 'frtip',
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         },
         columnDefs: [
             {
@@ -116,7 +116,7 @@ $(document).ready(function () {
         pageLength: 10,
         dom: 'frtip',
         language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
         },
         columnDefs: [
             { responsivePriority: 1, targets: 0 }, // Fecha
@@ -145,7 +145,7 @@ $(document).ready(function () {
                 $('#modalEditExpense input[name="id"]').val(id);
                 $('#modalEditExpense input[name="date"]').val(date);
                 $('#modalEditExpense input[name="description"]').val(description);
-                $('#modalEditExpense input[name="amount"]').val(amount);
+                $('#modalEditExpense input[name="amount"]').val(formatNumber(amount));
                 // 👇 Truco: marcar el option correcto ANTES de refrescar
                 $('#modal_payment_method option').prop('selected', false); // limpiar
                 $('#modal_payment_method option[value="' + payment_method + '"]').prop('selected', true);
@@ -161,6 +161,7 @@ $(document).ready(function () {
                 $('#modalEditExpense input[name="code"]').val(code);
             }
             else if (modal.id === 'modalEditIncome') {
+
                 // Obtener datos del botón
                 var id = $(trigger).data('id');
                 var date = $(trigger).data('date');
@@ -173,7 +174,7 @@ $(document).ready(function () {
                 $('#modalEditIncome input[name="id"]').val(id);
                 $('#modalEditIncome input[name="date"]').val(date);
                 $('#modalEditIncome input[name="description"]').val(description);
-                $('#modalEditIncome input[name="amount"]').val(amount);
+                $('#modalEditIncome input[name="amount"]').val(formatNumber(amount));
                 // 👇 Truco: marcar el option correcto ANTES de refrescar
                 $('#modal_payment_method option').prop('selected', false); // limpiar
                 $('#modal_payment_method option[value="' + payment_method + '"]').prop('selected', true);
@@ -318,29 +319,72 @@ $(document).ready(function () {
         });
     }
 
-    const $amountField = $('input[name="amount"]'); // ajusta al name/id real
+    // Función de formateo
+    // function formatNumber(val) {
+    //     let num = parseFloat(val);
+    //     if (isNaN(num)) return '';
 
-    // Al escribir, formatear como moneda
-    $amountField.on('input', function () {
-        let val = $(this).val();
+    //     if (num % 1 === 0) {
+    //         return Math.trunc(num).toLocaleString('es-CO', {
+    //             minimumFractionDigits: 0,
+    //             maximumFractionDigits: 0
+    //         });
+    //     }
 
-        // Eliminar todo lo que no sea número
-        val = val.replace(/[^\d]/g, '');
+    //     return num.toLocaleString('es-CO', {
+    //         minimumFractionDigits: 0,
+    //         maximumFractionDigits: 2
+    //     });
+    // }
 
-        if (val) {
-            // Convertir a número y formatear con separadores
-            const num = parseInt(val, 10);
-            $(this).val(num.toLocaleString('es-CO')); // ejemplo: "12.345"
+    function formatNumber(val) {
+        if (!val) return '';
+
+        // Si el valor ya viene con separadores (ej. "58.000"), no lo parsees
+        if (/^\d{1,3}(\.\d{3})*(,\d+)?$/.test(val)) {
+            return val; // ya está formateado
+        }
+
+        // Si viene crudo (ej. "58000.00"), entonces sí lo parseas
+        let num = parseFloat(val);
+        if (isNaN(num)) return '';
+
+        if (num % 1 === 0) {
+            return Math.trunc(num).toLocaleString('es-CO', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+        }
+
+        return num.toLocaleString('es-CO', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        });
+    }
+
+
+    // Al escribir en cualquier campo amount
+    $(document).on('input', 'input[name="amount"]', function () {
+        console.log($(this).val());
+        let raw = $(this).val().replace(/\D/g, ''); // solo dígitos
+        if (raw) {
+            const num = parseInt(raw, 10);
+            $(this).val(formatNumber(num));
+            // $(this).val(num.toLocaleString('es-CO'));
         }
     });
 
-    // Al cargar valor desde BD, formatear automáticamente
-    const initialVal = $amountField.val();
-    if (initialVal) {
-        const num = parseFloat(initialVal);
-        if (!isNaN(num)) {
-            $amountField.val(num.toLocaleString('es-CO'));
-        }
-    }
+
+    // Al abrir modal y cargar valor desde data
+    // function setAmountFormatted(modalSelector, amount) {
+    //     const $field = $(modalSelector).find('input[name="amount"]');
+    //     if (amount) {
+    //         // Si viene como 58000.00, conviértelo a entero
+    //         const num = parseFloat(amount);
+    //         $field.val(Number.isInteger(num) ? formatNumber(String(num)) : num.toLocaleString('es-CO'));
+    //     }
+    // }
 
 });
+
+
