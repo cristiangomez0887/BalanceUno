@@ -63,11 +63,20 @@ class Loan extends BaseModel
     // Actualizar préstamo
     public function update($id, $data)
     {
+        // Validar que el nuevo monto no sea inferior a lo ya pagado
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL");
+        $stmt->execute([':loan_id' => $id]);
+        $pagado = $stmt->fetchColumn() ?? 0;
+
+        if ($data['amount'] < $pagado) {
+            throw new \Exception("El nuevo monto del préstamo no puede ser menor a lo que ya se ha pagado ($pagado).");
+        }
+
         $stmt = $this->db->prepare("UPDATE loans 
             SET date = :date, loan = :loan, amount = :amount, payment_method = :payment_method, code = :code
             WHERE id = :id");
 
-        return $stmt->execute([
+        $result = $stmt->execute([
             ':id'             => $id,
             ':date'           => $data['date'],
             ':loan'           => $data['loan'],
@@ -75,6 +84,61 @@ class Loan extends BaseModel
             ':payment_method' => $data['payment_method'],
             ':code'           => $data['code'] ?? null
         ]);
+
+        if ($result) {
+            $stmt = $this->db->prepare("UPDATE incomes 
+                SET date = :date, amount = :amount, payment_method = :payment_method, code = :code
+                WHERE loan_id = :loan_id AND deleted_at IS NULL");
+            $stmt->execute([
+                ':loan_id'        => $id,
+                ':date'           => $data['date'],
+                ':amount'         => $data['amount'],
+                ':payment_method' => $data['payment_method'],
+                ':code'           => $data['code'] ?? null
+            ]);
+
+            $this->updateLoanStatus($id);
+        }
+
+        return $result;
+    }
+
+    public function softDelete($id)
+    {
+        // Verificar si tiene pagos asociados
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL");
+        $stmt->execute([':loan_id' => $id]);
+        $pagos = $stmt->fetchColumn();
+
+        if ($pagos > 0) {
+            throw new \Exception("No se puede eliminar el préstamo porque ya tiene pagos registrados. Elimine los pagos primero.");
+        }
+
+        $result = parent::softDelete($id);
+
+        if ($result) {
+            $stmt = $this->db->prepare("UPDATE incomes SET deleted_at = NOW() WHERE loan_id = :loan_id");
+            $stmt->execute([':loan_id' => $id]);
+        }
+
+        return $result;
+    }
+
+    private function updateLoanStatus($loanId)
+    {
+        $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id");
+        $stmt->execute([':loan_id' => $loanId]);
+        $prestado = $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL");
+        $stmt->execute([':loan_id' => $loanId]);
+        $pagado = $stmt->fetchColumn() ?? 0;
+
+        $nuevoPendiente = $prestado - $pagado;
+        $nuevoEstado = ($nuevoPendiente <= 1) ? 'Pagado' : 'Pendiente';
+
+        $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id");
+        $stmt->execute([':status' => $nuevoEstado, ':loan_id' => $loanId]);
     }
 
     public function loanPayment($data)

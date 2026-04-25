@@ -91,11 +91,39 @@ class Expense extends BaseModel
     // Actualizar gasto
     public function update($id, $data)
     {
+        $existing = $this->findById($id);
+        if (!$existing) {
+            throw new Exception("El gasto no existe.");
+        }
+
+        if ($existing['loan_id']) {
+            $loanId = $existing['loan_id'];
+            $newAmount = $data['amount'];
+            $data['description'] = $existing['description']; // Mantener descripción original
+
+            // Traer datos del préstamo
+            $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
+            $stmt->execute([':loan_id' => $loanId]);
+            $prestado = $stmt->fetchColumn();
+
+            // Total pagado SIN incluir el pago actual
+            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
+                                      WHERE loan_id = :loan_id AND id != :id AND deleted_at IS NULL");
+            $stmt->execute([':loan_id' => $loanId, ':id' => $id]);
+            $pagadoOtros = $stmt->fetchColumn() ?? 0;
+
+            $pendienteSinEstePago = $prestado - $pagadoOtros;
+
+            if ($newAmount > $pendienteSinEstePago + 0.01) {
+                throw new Exception("El nuevo monto ($newAmount) no puede ser superior al saldo restante del préstamo.");
+            }
+        }
+
         $stmt = $this->db->prepare("UPDATE expenses 
             SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
             WHERE id = :id");
 
-        return $stmt->execute([
+        $result = $stmt->execute([
             ':id'             => $id,
             ':date'           => $data['date'],
             ':description'    => $data['description'],
@@ -103,6 +131,46 @@ class Expense extends BaseModel
             ':payment_method' => $data['payment_method'],
             ':code'           => $data['code'] ?? null
         ]);
+
+        if ($existing['loan_id']) {
+            $this->updateLoanStatus($existing['loan_id']);
+        }
+
+        return $result;
+    }
+
+    // Soft delete de gasto
+    public function softDelete($id)
+    {
+        $existing = $this->findById($id);
+        if (!$existing) {
+            return false;
+        }
+
+        $result = parent::softDelete($id);
+
+        if ($existing['loan_id'] && $result) {
+            $this->updateLoanStatus($existing['loan_id']);
+        }
+
+        return $result;
+    }
+
+    private function updateLoanStatus($loanId)
+    {
+        $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id");
+        $stmt->execute([':loan_id' => $loanId]);
+        $prestado = $stmt->fetchColumn();
+
+        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL");
+        $stmt->execute([':loan_id' => $loanId]);
+        $pagado = $stmt->fetchColumn() ?? 0;
+
+        $nuevoPendiente = $prestado - $pagado;
+        $nuevoEstado = ($nuevoPendiente <= 1) ? 'Pagado' : 'Pendiente';
+
+        $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id");
+        $stmt->execute([':status' => $nuevoEstado, ':loan_id' => $loanId]);
     }
 
     public function getLoans()
