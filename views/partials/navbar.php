@@ -5,6 +5,10 @@
                 <img src="../public/assets/logo.png" alt="BalanceUno" class="logo-img">
                 <span class="app-name">Balance Uno</span>
             </div>
+            <ul class="right">
+                <li><span style="margin-right: 15px;" class="hide-on-small-only"><i class="material-icons left">account_circle</i><?= $_SESSION['username'] ?? '' ?></span></li>
+                <li><a href="?action=logout" class="btn-flat white-text"><i class="material-icons">exit_to_app</i></a></li>
+            </ul>
         </div>
     </nav>
     <?php if (isset($pageTitle)): ?>

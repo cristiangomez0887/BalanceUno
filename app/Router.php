@@ -10,6 +10,10 @@ class Router
 
     // Tabla de enrutamiento
     private $routes = [
+        'login'            => ['controller' => 'App\Controllers\AuthController', 'method' => 'loginView'],
+        'doLogin'          => ['controller' => 'App\Controllers\AuthController', 'method' => 'login', 'params' => ['$_POST']],
+        'logout'           => ['controller' => 'App\Controllers\AuthController', 'method' => 'logout'],
+
         'dashboard' => ['controller' => 'App\Controllers\DashboardController', 'method' => 'index'],
 
         // Incomes
@@ -49,6 +53,15 @@ class Router
 
     public function handleRequest($action)
     {
+        // Rutas que no requieren login
+        $publicActions = ['login', 'doLogin'];
+
+        // Si no está logueado y no es una ruta pública, redirigir a login
+        if (!isset($_SESSION['user_id']) && !in_array($action, $publicActions)) {
+            header("Location: ?action=login");
+            exit;
+        }
+
         // Validación CSRF para todas las peticiones POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
