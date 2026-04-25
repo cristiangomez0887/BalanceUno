@@ -18,17 +18,17 @@
 
     <!-- Sub-barra de navegación / Título de página -->
     <?php if (isset($pageTitle)): ?>
-    <nav class="<?= $navColor ?? 'secondary-color' ?>">
-        <div class="nav-wrapper nav-app">
-            <a href="?action=dashboard" class="btn-back">
-                <i class="material-icons">arrow_back</i>
-            </a>
-            <div class="title-app">
-                <i class="material-icons"><?= $pageIcon ?? 'trending_up' ?></i>
-                <h3><?= $pageTitle ?></h3>
+        <nav class="<?= $navColor ?? 'secondary-color' ?>">
+            <div class="nav-wrapper nav-app">
+                <a href="?action=dashboard" class="btn-back">
+                    <i class="material-icons">arrow_back</i>
+                </a>
+                <div class="title-app">
+                    <i class="material-icons"><?= $pageIcon ?? 'trending_up' ?></i>
+                    <h3><?= $pageTitle ?></h3>
+                </div>
+                <!-- Espaciador para mantener el título centrado -->
+                <div style="width: 48px;" class="hide-on-small-only"></div>
             </div>
-            <!-- Espaciador para mantener el título centrado -->
-            <div style="width: 48px;" class="hide-on-small-only"></div>
-        </div>
-    </nav>
+        </nav>
     <?php endif; ?>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>BalanceUno - <?= $title ?? 'Control Financiero' ?></title>
@@ -15,11 +16,12 @@
     <!-- SweetAlert2 -->
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <?php if (isset($useDataTables) && $useDataTables): ?>
-    <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
+        <!-- DataTables CSS -->
+        <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+        <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
     <?php endif; ?>
     <link rel="stylesheet" href="../public/css/custom.css">
     <?php if (isset($extraStyles)) echo $extraStyles; ?>
 </head>
+
 <body class="container">
