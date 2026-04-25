@@ -57,13 +57,14 @@ include __DIR__ . '/partials/navbar.php';
                         </td>
                         <td class="grey-text"><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
                         <td class="center-align">
-                            <a href="#modalEditExpense" class="btn-flat waves-effect modal-trigger" style="color: var(--info);"
+                            <a href="<?= !empty($expense['loan_id']) ? '#modalEditLoanPayment' : '#modalEditExpense' ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--info);"
                                 data-id="<?= $expense['id'] ?>"
                                 data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
                                 data-description="<?= htmlspecialchars($expense['description']) ?>"
                                 data-amount="<?= htmlspecialchars($expense['amount']) ?>"
                                 data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
-                                data-code="<?= htmlspecialchars($expense['code']) ?>">
+                                data-code="<?= htmlspecialchars($expense['code']) ?>"
+                                data-loan_id="<?= $expense['loan_id'] ?? '' ?>">
                                 <i class="material-icons">edit</i>
                             </a>
                             <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--error);">
@@ -221,6 +222,59 @@ include __DIR__ . '/partials/navbar.php';
         </form>
     </div>
 </div>
+
+<!-- Modal Editar Pago Préstamo -->
+<div id="modalEditLoanPayment" class="modal">
+    <div class="modal-content">
+        <h5 class="center-align loans-color-text">
+            <i class="material-icons left">edit</i> Editar Pago Préstamo
+        </h5>
+        <form method="POST" action="?action=updateExpense">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="id">
+            
+            <div class="input-field">
+                <input type="hidden" name="loan_id" id="edit_loan_id_hidden">
+                <select id="modal_edit_loan_id" required>
+                    <option value="" disabled>Seleccione un préstamo</option>
+                    <?php foreach ($loans as $loan): ?>
+                        <option value="<?= $loan['id'] ?>"><?= htmlspecialchars($loan['loan']) ?> - $<?= number_format($loan['pendiente'], 0, ",", ".") ?> COP</option>
+                    <?php endforeach ?>
+                </select>
+                <label>Préstamo al que se abona</label>
+            </div>
+            <div class="input-field">
+                <input type="text" class="datepicker" name="date" required>
+                <label class="active">Fecha</label>
+            </div>
+            <div class="input-field">
+                <input type="text" name="amount" required>
+                <label class="active">Monto (COP)</label>
+            </div>
+            
+            <!-- Hidden que sí se envía -->
+            <input type="hidden" name="payment_method" id="edit_loan_payment_method_hidden">
+            <div class="input-field">
+                <select id="modal_edit_loan_payment_method" required>
+                    <option value="" disabled>Elige método</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Nequi">Nequi</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+                <label>Método de pago</label>
+            </div>
+            <div class="input-field">
+                <input type="text" name="code">
+                <label class="active">Código (Nequi o Transferencia)</label>
+            </div>
+            <div class="center-align">
+                <button type="submit" class="btn loans-color">Actualizar Pago</button>
+                <a href="#!" class="modal-close btn grey">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <?php
 include __DIR__ . '/partials/footer.php';

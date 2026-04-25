@@ -304,6 +304,39 @@ $(document).ready(function () {
         });
 
         $('#modalEditIncome input[name="code"]').val(code);
+      } else if (modal.id === "modalEditLoanPayment") {
+        // Obtener datos del botón
+        var id = $(trigger).data("id");
+        var date = $(trigger).data("date");
+        var amount = $(trigger).data("amount");
+        var payment_method = $(trigger).data("payment_method");
+        var code = $(trigger).data("code");
+        var loan_id = $(trigger).data("loan_id");
+
+        // Rellenar el formulario
+        $('#modalEditLoanPayment input[name="id"]').val(id);
+        $('#modalEditLoanPayment input[name="date"]').val(date);
+        $('#modalEditLoanPayment input[name="amount"]').val(formatNumber(amount));
+        
+        $("#modal_edit_loan_payment_method option").prop("selected", false); // limpiar
+        $('#modal_edit_loan_payment_method option[value="' + payment_method + '"]').prop("selected", true);
+        $("#modal_edit_loan_payment_method").formSelect({
+          dropdownOptions: {
+            coverTrigger: false,
+            closeOnClick: true,
+          },
+        });
+
+        $("#modal_edit_loan_id option").prop("selected", false); // limpiar
+        $('#modal_edit_loan_id option[value="' + loan_id + '"]').prop("selected", true);
+        $("#modal_edit_loan_id").formSelect({
+          dropdownOptions: {
+            coverTrigger: false,
+            closeOnClick: true,
+          },
+        });
+
+        $('#modalEditLoanPayment input[name="code"]').val(code);
       } else if (modal.id === "modalEditLoan") {
         // Obtener datos del botón
         var id = $(trigger).data("id");
@@ -351,6 +384,16 @@ $(document).ready(function () {
     handleAjaxSubmit($(this));
   });
 
+  // Antes de enviar, copiar el valor del select al hidden para pago de préstamo
+  $("#modalEditLoanPayment .modal-content form").on("submit", function (e) {
+    e.preventDefault();
+    const valMethod = $("#modal_edit_loan_payment_method").val();
+    $("#edit_loan_payment_method_hidden").val(valMethod);
+    const valLoanId = $("#modal_edit_loan_id").val();
+    $("#edit_loan_id_hidden").val(valLoanId);
+    handleAjaxSubmit($(this));
+  });
+
   // Antes de enviar, copiar el valor del select al hidden para préstamo
   $("#modalEditLoan .modal-content form").on("submit", function (e) {
     e.preventDefault();
@@ -364,6 +407,7 @@ $(document).ready(function () {
     .not("#modalEditIncome form")
     .not("#modalEditExpense form")
     .not("#modalEditLoan form")
+    .not("#modalEditLoanPayment form")
     .on("submit", function (e) {
       e.preventDefault();
       handleAjaxSubmit($(this));

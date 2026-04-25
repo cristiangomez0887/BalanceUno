@@ -96,44 +96,95 @@ class Expense extends BaseModel
             throw new Exception("El gasto no existe.");
         }
 
-        if ($existing['loan_id']) {
-            $loanId = $existing['loan_id'];
+        $oldLoanId = $existing['loan_id'];
+        $newLoanId = $data['loan_id'] ?? $oldLoanId;
+
+        if ($oldLoanId) { // Era un pago de préstamo
             $newAmount = $data['amount'];
-            $data['description'] = $existing['description']; // Mantener descripción original
+            
+            if ($newLoanId != $oldLoanId) {
+                // Se cambió a otro préstamo
+                // 1. Obtener nombre del nuevo préstamo
+                $stmt = $this->db->prepare("SELECT loan, amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $newLoanId]);
+                $newLoanData = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                if (!$newLoanData) {
+                    throw new Exception("El nuevo préstamo seleccionado no existe.");
+                }
+                
+                $data['description'] = "Pago Préstamo " . $newLoanData['loan'];
+                
+                // 2. Validar saldo del nuevo préstamo (no necesitamos excluir el pago actual porque pertenece al otro préstamo)
+                $prestado = $newLoanData['amount'];
+                $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
+                                          WHERE loan_id = :loan_id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $newLoanId]);
+                $pagado = $stmt->fetchColumn() ?? 0;
+                
+                $pendiente = $prestado - $pagado;
+                if ($newAmount > $pendiente + 0.01) {
+                    throw new Exception("El nuevo monto ($newAmount) no puede ser superior al saldo restante del nuevo préstamo.");
+                }
 
-            // Traer datos del préstamo
-            $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
-            $stmt->execute([':loan_id' => $loanId]);
-            $prestado = $stmt->fetchColumn();
+            } else {
+                // Sigue siendo el mismo préstamo
+                $data['description'] = $existing['description']; // Mantener descripción original
 
-            // Total pagado SIN incluir el pago actual
-            $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
-                                      WHERE loan_id = :loan_id AND id != :id AND deleted_at IS NULL");
-            $stmt->execute([':loan_id' => $loanId, ':id' => $id]);
-            $pagadoOtros = $stmt->fetchColumn() ?? 0;
+                // Traer datos del préstamo
+                $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $oldLoanId]);
+                $prestado = $stmt->fetchColumn();
 
-            $pendienteSinEstePago = $prestado - $pagadoOtros;
+                // Total pagado SIN incluir el pago actual
+                $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
+                                          WHERE loan_id = :loan_id AND id != :id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $oldLoanId, ':id' => $id]);
+                $pagadoOtros = $stmt->fetchColumn() ?? 0;
 
-            if ($newAmount > $pendienteSinEstePago + 0.01) {
-                throw new Exception("El nuevo monto ($newAmount) no puede ser superior al saldo restante del préstamo.");
+                $pendienteSinEstePago = $prestado - $pagadoOtros;
+
+                if ($newAmount > $pendienteSinEstePago + 0.01) {
+                    throw new Exception("El nuevo monto ($newAmount) no puede ser superior al saldo restante del préstamo.");
+                }
             }
         }
 
-        $stmt = $this->db->prepare("UPDATE expenses 
-            SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
-            WHERE id = :id");
+        // Actualizar
+        if ($oldLoanId) {
+            $stmt = $this->db->prepare("UPDATE expenses 
+                SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code, loan_id = :loan_id
+                WHERE id = :id");
+                
+            $result = $stmt->execute([
+                ':id'             => $id,
+                ':date'           => $data['date'],
+                ':description'    => $data['description'],
+                ':amount'         => $data['amount'],
+                ':payment_method' => $data['payment_method'],
+                ':code'           => $data['code'] ?? null,
+                ':loan_id'        => $newLoanId
+            ]);
+        } else {
+            $stmt = $this->db->prepare("UPDATE expenses 
+                SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
+                WHERE id = :id");
+                
+            $result = $stmt->execute([
+                ':id'             => $id,
+                ':date'           => $data['date'],
+                ':description'    => $data['description'],
+                ':amount'         => $data['amount'],
+                ':payment_method' => $data['payment_method'],
+                ':code'           => $data['code'] ?? null
+            ]);
+        }
 
-        $result = $stmt->execute([
-            ':id'             => $id,
-            ':date'           => $data['date'],
-            ':description'    => $data['description'],
-            ':amount'         => $data['amount'],
-            ':payment_method' => $data['payment_method'],
-            ':code'           => $data['code'] ?? null
-        ]);
-
-        if ($existing['loan_id']) {
-            $this->updateLoanStatus($existing['loan_id']);
+        if ($oldLoanId) {
+            $this->updateLoanStatus($oldLoanId);
+            if ($newLoanId != $oldLoanId) {
+                $this->updateLoanStatus($newLoanId);
+            }
         }
 
         return $result;
