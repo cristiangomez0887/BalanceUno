@@ -12,6 +12,14 @@ class Expense extends BaseModel
         parent::__construct($db, 'expenses');
     }
 
+    // Obtener todos los pagos de un préstamo específico
+    public function getPaymentsByLoanId($loanId)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL ORDER BY date DESC, id DESC");
+        $stmt->execute([':loan_id' => $loanId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     // Crear gasto
     public function create($data)
     {

@@ -44,6 +44,7 @@ class Router
         'updateLoan'     => ['controller' => 'App\Controllers\LoansController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
         'deleteLoan'     => ['controller' => 'App\Controllers\LoansController', 'method' => 'delete', 'params' => ['$_POST[id]']],
         'exportLoansXls' => ['controller' => 'App\Controllers\LoansController', 'method' => 'exportXls'],
+        'getLoanPayments'=> ['controller' => 'App\Controllers\LoansController', 'method' => 'getPayments', 'params' => ['$_GET[id]']],
     ];
 
     public function __construct()
@@ -89,6 +90,8 @@ class Router
                     $args[] = $_POST;
                 } elseif ($param === '$_POST[id]') {
                     $args[] = $_POST['id'] ?? null;
+                } elseif ($param === '$_GET[id]') {
+                    $args[] = $_GET['id'] ?? null;
                 }
             }
         }

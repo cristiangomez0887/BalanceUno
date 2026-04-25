@@ -159,6 +159,30 @@ $(document).ready(function () {
           targets: 2, // Saldo
           className: "dt-body-right",
         },
+        {
+          responsivePriority: 3,
+          targets: -1, // Acciones
+          orderable: false,
+          searchable: false,
+        },
+      ],
+    });
+  }
+
+  // Loan History DataTable
+  let loanHistoryTable;
+  if (typeof $.fn.DataTable === "function" && $("#loanHistoryTable").length) {
+    loanHistoryTable = $("#loanHistoryTable").DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 5,
+      dom: "frtip", 
+      order: [[0, "desc"]],
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+      },
+      columnDefs: [
+        { className: "dt-body-right", targets: 3 },
       ],
     });
   }
@@ -380,6 +404,52 @@ $(document).ready(function () {
       e.preventDefault();
       handleAjaxSubmit($(this));
     });
+
+  // Load Loan History via AJAX
+  $(document).on("click", ".btn-view-history", function(e) {
+    e.preventDefault();
+    const loanId = $(this).data("id");
+    const loanName = $(this).data("loan");
+    
+    $("#historyLoanName").text(loanName);
+    
+    if (loanHistoryTable) {
+        loanHistoryTable.clear().draw();
+    }
+    
+    $.ajax({
+        url: "?action=getLoanPayments&id=" + loanId,
+        method: "GET",
+        dataType: "json",
+        success: function(res) {
+            if (res.success && loanHistoryTable) {
+                res.data.forEach(function(payment) {
+                    const dateParts = payment.date.split('-');
+                    const formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
+                    const formattedAmount = '$' + formatNumber(payment.amount);
+                    const method = '<span class="badge grey lighten-3 black-text" style="float: none; border-radius: 4px;">' + payment.payment_method + '</span>';
+                    const code = payment.payment_method === 'Efectivo' ? '-' : (payment.code || '');
+                    
+                    loanHistoryTable.row.add([
+                        formattedDate,
+                        method,
+                        code,
+                        '<span class="accent-color-text" style="font-weight:600;">' + formattedAmount + '</span>'
+                    ]);
+                });
+                loanHistoryTable.draw(false);
+                setTimeout(function() {
+                    loanHistoryTable.columns.adjust().responsive.recalc();
+                }, 200);
+            } else {
+                M.toast({html: res.message || 'Error al procesar datos', classes: 'error-color'});
+            }
+        },
+        error: function() {
+            M.toast({html: 'Error al cargar el historial', classes: 'error-color'});
+        }
+    });
+  });
 
   function handleAjaxSubmit($form) {
     const url = $form.attr("action");

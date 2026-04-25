@@ -3,14 +3,17 @@
 namespace App\Controllers;
 
 use App\Models\Loan;
+use App\Models\Expense;
 
 class LoansController
 {
     private $model;
+    private $expenseModel;
 
     public function __construct($db)
     {
         $this->model = new Loan($db);
+        $this->expenseModel = new Expense($db);
     }
 
     private function isAjax()
@@ -23,6 +26,26 @@ class LoansController
     {
         $loans = $this->model->getAll();
         include __DIR__ . '/../../views/loans.php';
+    }
+
+    // Obtener historial de pagos por AJAX
+    public function getPayments($id)
+    {
+        if (!$this->isAjax()) {
+            header("Location: ?action=loans");
+            exit;
+        }
+
+        try {
+            if (!$id) {
+                throw new \Exception("ID de préstamo no proporcionado");
+            }
+            $payments = $this->expenseModel->getPaymentsByLoanId($id);
+            echo json_encode(['success' => true, 'data' => $payments]);
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        }
+        exit;
     }
 
     // Crear gasto
