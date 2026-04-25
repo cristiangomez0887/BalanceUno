@@ -1,1 +1,6 @@
+vendor/
 .vscode/
+.env
+.idea/
+.agent/
+.plans/

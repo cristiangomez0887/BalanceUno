@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../models/Income.php';
+
+namespace App\Controllers;
+
+use App\Models\Income;
 
 class IncomesController
 {

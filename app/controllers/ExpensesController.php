@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../models/Expense.php';
+
+namespace App\Controllers;
+
+use App\Models\Expense;
 
 class ExpensesController
 {

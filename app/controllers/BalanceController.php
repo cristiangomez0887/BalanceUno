@@ -1,5 +1,9 @@
 <?php
-require_once __DIR__ . '/../models/Balance.php';
+
+namespace App\Controllers;
+
+use App\Models\Balance;
+use DateTime;
 
 class BalanceController
 {

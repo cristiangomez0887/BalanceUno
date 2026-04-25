@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../models/Dashboard.php';
+
+namespace App\Controllers;
+
+use App\Models\Dashboard;
 
 class DashboardController
 {

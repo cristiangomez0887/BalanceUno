@@ -1,5 +1,9 @@
 <?php
-require_once __DIR__ . '/../models/Report.php';
+
+namespace App\Controllers;
+
+use App\Models\Report;
+use DateTime;
 
 class ReportsController
 {

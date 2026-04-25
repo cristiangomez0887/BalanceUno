@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../models/Loan.php';
+
+namespace App\Controllers;
+
+use App\Models\Loan;
 
 class LoansController
 {
