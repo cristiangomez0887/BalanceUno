@@ -14,7 +14,14 @@ class Income extends BaseModel
     {
         $stmt = $this->db->prepare("INSERT INTO incomes (date, description, amount, payment_method, code)
             VALUES (:date, :description, :amount, :payment_method, :code)");
-        return $stmt->execute($data);
+
+        return $stmt->execute([
+            ':date'           => $data['date'],
+            ':description'    => $data['description'],
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null
+        ]);
     }
 
     // Actualizar ingreso
@@ -23,7 +30,14 @@ class Income extends BaseModel
         $stmt = $this->db->prepare("UPDATE incomes 
             SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
             WHERE id = :id");
-        $data['id'] = $id; // Agregar el ID al array de datos para la consulta
-        return $stmt->execute($data);
+
+        return $stmt->execute([
+            ':id'             => $id,
+            ':date'           => $data['date'],
+            ':description'    => $data['description'],
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null
+        ]);
     }
 }

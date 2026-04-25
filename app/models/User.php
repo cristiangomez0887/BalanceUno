@@ -6,7 +6,10 @@ use PDO;
 
 class User extends BaseModel
 {
-    protected $table = 'users';
+    public function __construct($db)
+    {
+        parent::__construct($db, 'users');
+    }
 
     public function findByUsername($username)
     {

@@ -30,38 +30,65 @@ class Loan extends BaseModel
     // Crear préstamo
     public function create($data)
     {
-        //registrar en loans
+        // registrar en loans
         $description = $data['description'];
-        unset($data['description']);
+
         $stmt = $this->db->prepare("INSERT INTO loans (loan, date, amount, payment_method, code) 
         VALUES (:loan, :date, :amount, :payment_method, :code)");
-        $stmt->execute($data);
+
+        $stmt->execute([
+            ':loan'           => $data['loan'],
+            ':date'           => $data['date'],
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null
+        ]);
 
         $loanId = $this->db->lastInsertId();
-        $data['loan_id'] = $loanId;
-        $data['description'] = $description;
-        unset($data['loan']);
 
         // Registrar también en incomes
         $stmt = $this->db->prepare("INSERT INTO incomes (date, description, amount, payment_method, code, loan_id) 
         VALUES (:date, :description, :amount, :payment_method, :code, :loan_id);");
-        return $stmt->execute($data);
+
+        return $stmt->execute([
+            ':date'           => $data['date'],
+            ':description'    => $description,
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null,
+            ':loan_id'        => $loanId
+        ]);
     }
 
     // Actualizar préstamo
     public function update($id, $data)
     {
-        $data['id'] = $id; // Agregar el ID al array de datos para la consulta
         $stmt = $this->db->prepare("UPDATE loans 
             SET date = :date, loan = :loan, amount = :amount, payment_method = :payment_method, code = :code
             WHERE id = :id");
-        return $stmt->execute($data);
+
+        return $stmt->execute([
+            ':id'             => $id,
+            ':date'           => $data['date'],
+            ':loan'           => $data['loan'],
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null
+        ]);
     }
 
     public function loanPayment($data)
     {
         $stmt = $this->db->prepare("INSERT INTO expenses (date, description, amount, payment_method, code, loan_id) 
         VALUES (:date, :description, :amount, :payment_method, :code, :loan_id)");
-        $stmt->execute($data);
+
+        return $stmt->execute([
+            ':date'           => $data['date'],
+            ':description'    => $data['description'],
+            ':amount'         => $data['amount'],
+            ':payment_method' => $data['payment_method'],
+            ':code'           => $data['code'] ?? null,
+            ':loan_id'        => $data['loan_id']
+        ]);
     }
 }
