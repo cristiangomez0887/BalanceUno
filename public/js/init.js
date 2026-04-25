@@ -159,12 +159,6 @@ $(document).ready(function () {
           targets: 2, // Saldo
           className: "dt-body-right",
         },
-        {
-          responsivePriority: 3,
-          targets: -1, // Acciones
-          orderable: false,
-          searchable: false,
-        },
       ],
     });
   }
@@ -282,9 +276,19 @@ $(document).ready(function () {
         if (description.startsWith("Préstamo")) {
             $('#modalEditIncome input[name="description"]').prop('readonly', true);
             $('#modalEditIncome input[name="description"]').addClass('grey-text');
+            
+            // Cambiar estilos a "loans-color"
+            $('#modalEditIncome h5').removeClass('secondary-color-text').addClass('loans-color-text');
+            $('#modalEditIncome h5').html('<i class="material-icons left">sync</i> Editar Préstamo');
+            $('#modalEditIncome button[type="submit"]').removeClass('secondary-color').addClass('loans-color');
         } else {
             $('#modalEditIncome input[name="description"]').prop('readonly', false);
             $('#modalEditIncome input[name="description"]').removeClass('grey-text');
+            
+            // Revertir a "secondary-color"
+            $('#modalEditIncome h5').removeClass('loans-color-text').addClass('secondary-color-text');
+            $('#modalEditIncome h5').html('<i class="material-icons left">edit</i> Editar Ingreso');
+            $('#modalEditIncome button[type="submit"]').removeClass('loans-color').addClass('secondary-color');
         }
 
         $('#modalEditIncome input[name="amount"]').val(formatNumber(amount));
@@ -337,33 +341,6 @@ $(document).ready(function () {
         });
 
         $('#modalEditLoanPayment input[name="code"]').val(code);
-      } else if (modal.id === "modalEditLoan") {
-        // Obtener datos del botón
-        var id = $(trigger).data("id");
-        var date = $(trigger).data("date");
-        var loan = $(trigger).data("loan");
-        var amount = $(trigger).data("amount");
-        var payment_method = $(trigger).data("payment_method");
-        var code = $(trigger).data("code");
-
-        // Rellenar el formulario
-        $('#modalEditLoan input[name="id"]').val(id);
-        $('#modalEditLoan input[name="date"]').val(date);
-        $('#modalEditLoan input[name="loan"]').val(loan);
-        $('#modalEditLoan input[name="amount"]').val(formatNumber(amount));
-        
-        $("#modal_loan_payment_method option").prop("selected", false); // limpiar
-        $('#modal_loan_payment_method option[value="' + payment_method + '"]').prop("selected", true);
-
-        // Refrescar Materialize
-        $("#modal_loan_payment_method").formSelect({
-          dropdownOptions: {
-            coverTrigger: false,
-            closeOnClick: true,
-          },
-        });
-
-        $('#modalEditLoan input[name="code"]').val(code);
       }
     },
   });
@@ -394,19 +371,10 @@ $(document).ready(function () {
     handleAjaxSubmit($(this));
   });
 
-  // Antes de enviar, copiar el valor del select al hidden para préstamo
-  $("#modalEditLoan .modal-content form").on("submit", function (e) {
-    e.preventDefault();
-    const val = $("#modal_loan_payment_method").val();
-    $("#loan_payment_method_hidden").val(val);
-    handleAjaxSubmit($(this));
-  });
-
   // Manejar todos los demás formularios de modales (crear, eliminar) de forma genérica
   $(".modal form")
     .not("#modalEditIncome form")
     .not("#modalEditExpense form")
-    .not("#modalEditLoan form")
     .not("#modalEditLoanPayment form")
     .on("submit", function (e) {
       e.preventDefault();

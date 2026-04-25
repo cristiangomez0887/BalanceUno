@@ -372,7 +372,7 @@ table.dataTable.dtr-inline.collapsed
 }
 
 /* --- Modal Fixes --- */
-.modal {
+.modal:not(.datepicker-modal) {
   max-height: 90% !important;
   overflow-y: auto !important;
   border-radius: 20px !important;
@@ -387,7 +387,7 @@ table.dataTable.dtr-inline.collapsed
     border-radius: 0 !important;
     max-height: 100% !important;
   }
-  .modal .modal-content {
+  .modal:not(.datepicker-modal) .modal-content {
     overflow-y: auto !important;
     padding: 20px !important;
   }
