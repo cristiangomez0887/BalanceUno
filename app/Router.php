@@ -1,76 +1,79 @@
 <?php
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/controllers/IncomesController.php';
-require_once __DIR__ . '/controllers/ExpensesController.php';
-require_once __DIR__ . '/controllers/BalanceController.php';
-require_once __DIR__ . '/controllers/ReportsController.php';
-
 
 class Router
 {
     private $db;
-    private $incomesController;
-    private $expensesController;
-    private $balanceController;
-    private $reportsController;
+
+    // Tabla de enrutamiento
+    private $routes = [
+        'dashboard' => ['controller' => 'DashboardController', 'method' => 'index'],
+
+        // Incomes
+        'incomes'          => ['controller' => 'IncomesController', 'method' => 'index'],
+        'createIncome'     => ['controller' => 'IncomesController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateIncome'     => ['controller' => 'IncomesController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteIncome'     => ['controller' => 'IncomesController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+        'exportIncomesXls' => ['controller' => 'IncomesController', 'method' => 'exportXls'],
+
+        // Expenses
+        'expenses'          => ['controller' => 'ExpensesController', 'method' => 'index'],
+        'createExpense'     => ['controller' => 'ExpensesController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateExpense'     => ['controller' => 'ExpensesController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteExpense'     => ['controller' => 'ExpensesController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+        'exportExpensesXls' => ['controller' => 'ExpensesController', 'method' => 'exportXls'],
+
+        // Balance
+        'balance'          => ['controller' => 'BalanceController', 'method' => 'index', 'params' => ['$_POST']],
+        'exportBalanceXls' => ['controller' => 'BalanceController', 'method' => 'exportXls', 'params' => ['$_POST']],
+
+        // Reports
+        'reports'          => ['controller' => 'ReportsController', 'method' => 'index', 'params' => ['$_POST']],
+        'exportReportsXls' => ['controller' => 'ReportsController', 'method' => 'exportXls', 'params' => ['$_POST']],
+
+        // Loans
+        'loans'          => ['controller' => 'LoansController', 'method' => 'index'],
+        'createLoan'     => ['controller' => 'LoansController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateLoan'     => ['controller' => 'LoansController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteLoan'     => ['controller' => 'LoansController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+        'exportLoansXls' => ['controller' => 'LoansController', 'method' => 'exportXls'],
+    ];
 
     public function __construct()
     {
         $this->db = Database::getConnection();
-        $this->incomesController = new IncomesController($this->db);
-        $this->expensesController = new ExpensesController($this->db);
-        $this->balanceController = new BalanceController($this->db);
-        $this->reportsController = new ReportsController($this->db);
     }
 
     public function handleRequest($action)
     {
-        switch ($action) {
-            case 'incomes':
-                $this->incomesController->index();
-                break;
-            case 'createIncome':
-                $this->incomesController->create($_POST);
-                break;
-            case 'updateIncome':
-                $this->incomesController->update($_POST['id'], $_POST);
-                break;
-            case 'deleteIncome':
-                $this->incomesController->delete($_POST['id']);
-                break;
-            case 'exportIncomesXls':
-                $this->incomesController->exportXls();
-                break;
-            case 'expenses':
-                $this->expensesController->index();
-                break;
-            case 'createExpense':
-                $this->expensesController->create($_POST);
-                break;
-            case 'updateExpense':
-                $this->expensesController->update($_POST['id'], $_POST);
-                break;
-            case 'deleteExpense':
-                $this->expensesController->delete($_POST['id']);
-                break;
-            case 'exportExpensesXls':
-                $this->expensesController->exportXls();
-                break;
-            case 'balance':
-                $this->balanceController->index($_POST);
-                break;
-            case 'exportBalanceXls':
-                $this->balanceController->exportXls($_POST);
-                break;
-            case 'reports':
-                $this->reportsController->index($_POST);
-                break;
-            case 'exportReportsXls':
-                $this->reportsController->exportXls($_POST);
-                break;
-            default:
-                include __DIR__ . '/../views/dashboard.php';
-                break;
+        // Si la acción no existe en las rutas, se va por defecto al dashboard
+        if (!array_key_exists($action, $this->routes)) {
+            $action = 'dashboard';
         }
+
+        $route = $this->routes[$action];
+        $controllerName = $route['controller'];
+        $methodName = $route['method'];
+
+        // Cargar el archivo del controlador de forma dinámica
+        require_once __DIR__ . '/controllers/' . $controllerName . '.php';
+
+        // Instanciar solo el controlador necesario
+        $controller = new $controllerName($this->db);
+
+        // Resolver los parámetros si la ruta los define
+        $args = [];
+        if (isset($route['params'])) {
+            foreach ($route['params'] as $param) {
+                if ($param === '$_POST') {
+                    $args[] = $_POST;
+                } elseif ($param === '$_POST[id]') {
+                    $args[] = $_POST['id'] ?? null;
+                }
+            }
+        }
+
+        // Llamar al método correspondiente pasando los argumentos
+        call_user_func_array([$controller, $methodName], $args);
     }
 }

@@ -26,7 +26,8 @@ body.container {
 
 
 footer {
-  margin-top: auto; /* se pega al fondo */
+    margin-top: auto;
+    /* se pega al fondo */
 }
 
 
@@ -46,7 +47,7 @@ footer {
     background-color: #e53935 !important;
 }
 
-/* verde balance */
+/* Verde balance */
 .accent-color {
     background-color: #43a047 !important;
 }
@@ -56,6 +57,17 @@ footer {
     background-color: #1e88e5 !important;
 }
 
+/* Morado préstamos */
+.loans-color {
+    background-color: #8e24aa !important;
+}
+
+/* Amarillo alertas */
+.alert-color {
+    background-color: #fdd835 !important;
+}
+
+/* Textos */
 .secondary-color-text {
     color: #fb8c00 !important;
 }
@@ -70,6 +82,14 @@ footer {
 
 .reports-color-text {
     color: #1e88e5 !important;
+}
+
+.loans-color-text {
+    color: #8e24aa !important;
+}
+
+.alert-color-text {
+    color: #fdd835 !important;
 }
 
 
@@ -183,3 +203,22 @@ footer {
     pointer-events: none;
     /* evita que el label bloquee el clic */
 }
+
+.card-mini {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+}
+
+.dashboard-box {
+    background: #ffffff;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-top: 1px solid #00695c;
+}
+
+/* footer {
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0px;
+} */

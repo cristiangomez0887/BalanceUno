@@ -89,6 +89,27 @@ $(document).ready(function () {
         } // Acciones
         ]
     });
+
+    // Loans Datatable
+    $('#loansTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        dom: 'frtip', // sin selector de cantidad de registros
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+        },
+        columnDefs: [{
+            responsivePriority: 1,
+            targets: 0,
+            className: 'dt-body-center'
+        }, // Fecha
+        {
+            responsivePriority: 2,
+            targets: 2,
+            className: 'dt-body-right'
+        }, // Monto
+        ]
+    });
     // Balance DataTable
     $('#balanceTable').DataTable({
         responsive: true,
@@ -319,24 +340,6 @@ $(document).ready(function () {
         });
     }
 
-    // Función de formateo
-    // function formatNumber(val) {
-    //     let num = parseFloat(val);
-    //     if (isNaN(num)) return '';
-
-    //     if (num % 1 === 0) {
-    //         return Math.trunc(num).toLocaleString('es-CO', {
-    //             minimumFractionDigits: 0,
-    //             maximumFractionDigits: 0
-    //         });
-    //     }
-
-    //     return num.toLocaleString('es-CO', {
-    //         minimumFractionDigits: 0,
-    //         maximumFractionDigits: 2
-    //     });
-    // }
-
     function formatNumber(val) {
         if (!val) return '';
 
@@ -370,20 +373,8 @@ $(document).ready(function () {
         if (raw) {
             const num = parseInt(raw, 10);
             $(this).val(formatNumber(num));
-            // $(this).val(num.toLocaleString('es-CO'));
         }
     });
-
-
-    // Al abrir modal y cargar valor desde data
-    // function setAmountFormatted(modalSelector, amount) {
-    //     const $field = $(modalSelector).find('input[name="amount"]');
-    //     if (amount) {
-    //         // Si viene como 58000.00, conviértelo a entero
-    //         const num = parseFloat(amount);
-    //         $field.val(Number.isInteger(num) ? formatNumber(String(num)) : num.toLocaleString('es-CO'));
-    //     }
-    // }
 
 });
 

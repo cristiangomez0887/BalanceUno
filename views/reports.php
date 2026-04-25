@@ -21,6 +21,14 @@
 <body class="container">
 
     <!-- Barra superior -->
+         <nav class="primary-color">
+        <div class="nav-wrapper nav-app">
+            <div class="logo-app">
+                <img src="../public/assets/logo.png" alt="BalanceUno" class="logo-img">
+                <span class="app-name">Balance Uno</span>
+            </div>
+        </div>
+    </nav>
     <nav class="reports-color">
         <div class="nav-wrapper nav-app">
             <a href="?action=dashboard" class="btn-back">
@@ -43,7 +51,7 @@
                         <label for="startDate">Fecha inicio</label>
                     </div>
                     <div class="input-field col s12 m6">
-                        <input type="text" name="endDate" value="<?= htmlspecialchars($filters['endDate'] ?? date('d/m/Y')) ?>">
+                        <input type="text" id="endDate" name="endDate" value="<?= htmlspecialchars($filters['endDate'] ?? date('d/m/Y')) ?>">
                         <label for="endDate">Fecha fin</label>
                     </div>
                     <button class="btn reports-color waves-effect waves-light action-btn" type="submit">

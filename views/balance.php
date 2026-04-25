@@ -19,6 +19,14 @@
 <body class="container">
 
     <!-- Barra superior -->
+    <nav class="primary-color">
+        <div class="nav-wrapper nav-app">
+            <div class="logo-app">
+                <img src="../public/assets/logo.png" alt="BalanceUno" class="logo-img">
+                <span class="app-name">Balance Uno</span>
+            </div>
+        </div>
+    </nav>
     <nav class="accent-color">
         <div class="nav-wrapper nav-app">
             <a href="?action=dashboard" class="btn-back">

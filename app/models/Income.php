@@ -1,20 +1,12 @@
 <?php
-class Income
-{
-    private $db;
+require_once __DIR__ . '/BaseModel.php';
 
+class Income extends BaseModel
+{
     public function __construct($db)
     {
-        $this->db = $db;
+        parent::__construct($db, 'incomes');
     }
-
-    // Listar todos los ingresos (excepto eliminados)
-    public function getAll()
-    {
-        $stmt = $this->db->query("SELECT * FROM incomes WHERE deleted_at IS NULL ORDER BY date DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
 
     // Crear ingreso
     public function create($data)
@@ -32,20 +24,5 @@ class Income
             WHERE id = :id");
         $data['id'] = $id; // Agregar el ID al array de datos para la consulta
         return $stmt->execute($data);
-    }
-
-    // Soft delete
-    public function softDelete($id)
-    {
-        $stmt = $this->db->prepare("UPDATE incomes SET deleted_at = NOW() WHERE id = :id");
-        return $stmt->execute(['id' => $id]);
-    }
-
-    // Buscar Ingreso por ID
-    public function findById($id)
-    {
-        $stmt = $this->db->prepare("SELECT * FROM incomes WHERE id = :id AND deleted_at IS NULL");
-        $stmt->execute(['id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }

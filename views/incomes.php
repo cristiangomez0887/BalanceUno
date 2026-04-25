@@ -40,6 +40,14 @@
 
 <body class="container">
     <!-- Barra superior -->
+    <nav class="primary-color">
+        <div class="nav-wrapper nav-app">
+            <div class="logo-app">
+                <img src="../public/assets/logo.png" alt="BalanceUno" class="logo-img">
+                <span class="app-name">Balance Uno</span>
+            </div>
+        </div>
+    </nav>
     <nav class="secondary-color">
         <div class="nav-wrapper nav-app">
             <!-- Botón atrás -->
@@ -61,6 +69,9 @@
                 <div class="right-align">
                     <a href="#modalCreateIncome" class="btn secondary-color modal-trigger action-btn">
                         <i class="material-icons left">add</i> Nuevo Ingreso
+                    </a>
+                    <a href="#modalCreateIncomeLoan" class="btn loans-color modal-trigger action-btn">
+                        <i class="material-icons left">add</i> Ingreso Préstamo
                     </a>
                     <a href="?action=exportIncomesXls" class="btn reports-color action-btn">
                         <i class="material-icons left">file_download</i> Exportar XLS
@@ -87,8 +98,8 @@
                                 <td><?= $income['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($income['code']) ?></td>
                                 <td>
                                     <a href="#modalEditIncome" class="btn-small blue modal-trigger"
-                                        data-id="<?= $income['id'] ?>
-                                    " data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
+                                        data-id="<?= $income['id'] ?>"
+                                        data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
                                         data-description="<?= htmlspecialchars($income['description']) ?>"
                                         data-amount="<?= htmlspecialchars($income['amount']) ?>"
                                         data-payment_method="<?= htmlspecialchars($income['payment_method']) ?>"
@@ -159,6 +170,42 @@
                 </div>
                 <div class="center-align">
                     <button type="submit" class="btn secondary-color">Guardar</button>
+                    <a href="#!" class="modal-close btn grey">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Crear Ingreso Préstamo -->
+    <div id="modalCreateIncomeLoan" class="modal">
+        <div class="modal-content">
+            <h5 class="center-align loans-color-text">
+                <i class="material-icons left">add</i> Ingreso Préstamo
+            </h5>
+            <form method="POST" action="?action=createLoan">
+                <div class="input-field">
+                    <input type="text" class="datepicker" name="date" value="<?= date('d/m/Y') ?>" required>
+                    <label>Fecha</label>
+                </div>
+                <div class="input-field">
+                    <input type="text" name="amount" required>
+                    <label>Monto (COP)</label>
+                </div>
+                <div class="input-field">
+                    <select name="payment_method" required>
+                        <option value="" disabled selected>Método de pago</option>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Nequi">Nequi</option>
+                        <option value="Transferencia">Transferencia</option>
+                    </select>
+                    <label>Método de pago</label>
+                </div>
+                <div class="input-field" style="z-index: 99 !important;">
+                    <input type="text" name="code" style="z-index: 99 !important;">
+                    <label>Código (Nequi o Transferencia)</label>
+                </div>
+                <div class="center-align">
+                    <button type="submit" class="btn loans-color">Guardar</button>
                     <a href="#!" class="modal-close btn grey">Cancelar</a>
                 </div>
             </form>

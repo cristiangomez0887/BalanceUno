@@ -1,26 +1,28 @@
 <?php
-require_once __DIR__ . '/../models/Expense.php';
+require_once __DIR__ . '/../models/Loan.php';
 
-class ExpensesController
+class LoansController
 {
     private $model;
 
     public function __construct($db)
     {
-        $this->model = new Expense($db);
+        $this->model = new Loan($db);
     }
 
     // Listar gastos
     public function index()
     {
-        $expenses = $this->model->getAll();
-        $loans = $this->model->getLoans();
-        include __DIR__ . '/../../views/expenses.php';
+        $loans = $this->model->getAll();
+        include __DIR__ . '/../../views/loans.php';
     }
 
     // Crear gasto
     public function create($data)
     {
+        $data['loan'] = $this->generateLoanCode();
+        $data['description'] = "Préstamo " . $data['loan'];
+
         if (empty($data['date'])) {
             $data['date'] = date('Y-m-d'); // formato ISO
         } else {
@@ -41,7 +43,7 @@ class ExpensesController
         $data['amount'] = (float) $amount;
 
         $this->model->create($data);
-        header("Location: ?action=expenses");
+        header("Location: ?action=incomes");
         exit;
     }
 
@@ -95,5 +97,10 @@ class ExpensesController
             echo "{$expense['date']}\t{$expense['description']}\t{$expense['amount']}\t{$expense['payment_method']}\t{$expense['code']}\n";
         }
         exit;
+    }
+
+    private function generateLoanCode()
+    {
+        return strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 4));
     }
 }
