@@ -18,6 +18,7 @@ include __DIR__ . '/partials/navbar.php';
             
             <!-- Formulario de fechas -->
             <form method="POST" action="?action=reports" class="row" style="margin-bottom: 30px;">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <div class="input-field col s12 m4">
                     <i class="material-icons prefix">calendar_today</i>
                     <input type="text" id="startDate" name="startDate" class="datepicker" value="<?= htmlspecialchars($filters['startDate'] ?? date('d/m/Y')) ?>">

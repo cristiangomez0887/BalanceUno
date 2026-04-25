@@ -13,6 +13,11 @@ class LoansController
         $this->model = new Loan($db);
     }
 
+    private function isAjax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+    }
+
     // Listar gastos
     public function index()
     {
@@ -46,6 +51,12 @@ class LoansController
         $data['amount'] = (float) $amount;
 
         $this->model->create($data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Préstamo registrado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
     }
@@ -76,6 +87,12 @@ class LoansController
         $data['amount'] = (float) $amount;
 
         $this->model->update($id, $data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Préstamo actualizado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
@@ -84,6 +101,12 @@ class LoansController
     public function delete($id)
     {
         $this->model->softDelete($id);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Préstamo eliminado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
     }

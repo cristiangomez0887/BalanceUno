@@ -37,113 +37,126 @@ $(document).ready(function () {
     $('.action-btn').addClass('waves-effect waves-light');
 
     // Incomes DataTable
-    $('#incomesTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: 'frtip', // sin selector de cantidad de registros
-        order: [[0, 'desc']], // ordenar por fecha descendente
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-        },
-        columnDefs: [{
-            responsivePriority: 1,
-            targets: 0,
-            className: 'dt-body-center'
-        }, // Fecha
-        {
-            responsivePriority: 1,
-            targets: 'col-monto',
-            className: 'dt-body-right'
-        },
-        {
-            responsivePriority: 3,
-            targets: -1,
-            orderable: false,
-            searchable: false,
-        } // Acciones
-        ]
-    });
-    // Expenses DataTable
-    $('#expensesTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: 'frtip', // sin selector de cantidad de registros
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-        },
-        columnDefs: [{
-            responsivePriority: 1,
-            targets: 0,
-            className: 'dt-body-center'
-        }, // Fecha
-        {
-            responsivePriority: 2,
-            targets: 2,
-            className: 'dt-body-right'
-        }, // Monto
-        {
-            responsivePriority: 3,
-            targets: -1,
-            orderable: false,
-            searchable: false,
-        } // Acciones
-        ]
-    });
-
-    // Loans Datatable
-    $('#loansTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: 'frtip', // sin selector de cantidad de registros
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-        },
-        columnDefs: [{
-            responsivePriority: 1,
-            targets: 0,
-            className: 'dt-body-center'
-        }, // Fecha
-        {
-            responsivePriority: 2,
-            targets: 2,
-            className: 'dt-body-right'
-        }, // Monto
-        ]
-    });
-    // Balance DataTable
-    $('#balanceTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: 'frtip',
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-        },
-        columnDefs: [
+    if (typeof $.fn.DataTable === 'function' && $('#incomesTable').length) {
+        $('#incomesTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            dom: 'frtip', // sin selector de cantidad de registros
+            order: [[0, 'desc']], // ordenar por fecha descendente
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            columnDefs: [{
+                responsivePriority: 1,
+                targets: 0,
+                className: 'dt-body-center'
+            }, // Fecha
             {
                 responsivePriority: 1,
-                targets: 0, // Fecha
-                className: 'dt-body-center'
+                targets: 'col-monto',
+                className: 'dt-body-right'
             },
             {
+                responsivePriority: 3,
+                targets: -1,
+                orderable: false,
+                searchable: false,
+            } // Acciones
+            ]
+        });
+    }
+
+    // Expenses DataTable
+    if (typeof $.fn.DataTable === 'function' && $('#expensesTable').length) {
+        $('#expensesTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            dom: 'frtip', // sin selector de cantidad de registros
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            columnDefs: [{
+                responsivePriority: 1,
+                targets: 0,
+                className: 'dt-body-center'
+            }, // Fecha
+            {
                 responsivePriority: 2,
-                targets: 3, // Monto
+                targets: 2,
                 className: 'dt-body-right'
-            }
-        ]
-    });
+            }, // Monto
+            {
+                responsivePriority: 3,
+                targets: -1,
+                orderable: false,
+                searchable: false,
+            } // Acciones
+            ]
+        });
+    }
+
+    // Loans Datatable
+    if (typeof $.fn.DataTable === 'function' && $('#loansTable').length) {
+        $('#loansTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            dom: 'frtip', // sin selector de cantidad de registros
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            columnDefs: [{
+                responsivePriority: 1,
+                targets: 0,
+                className: 'dt-body-center'
+            }, // Fecha
+            {
+                responsivePriority: 2,
+                targets: 2,
+                className: 'dt-body-right'
+            }, // Monto
+            ]
+        });
+    }
+
+    // Balance DataTable
+    if (typeof $.fn.DataTable === 'function' && $('#balanceTable').length) {
+        $('#balanceTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            dom: 'frtip',
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            columnDefs: [
+                {
+                    responsivePriority: 1,
+                    targets: 0, // Fecha
+                    className: 'dt-body-center'
+                },
+                {
+                    responsivePriority: 2,
+                    targets: 3, // Monto
+                    className: 'dt-body-right'
+                }
+            ]
+        });
+    }
+
     //Reports DataTable
-    $('#reportsTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        dom: 'frtip',
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-        },
-        columnDefs: [
-            { responsivePriority: 1, targets: 0 }, // Fecha
-            { responsivePriority: 2, targets: 3, className: 'dt-body-right' } // Monto
-        ]
-    });
+    if (typeof $.fn.DataTable === 'function' && $('#reportsTable').length) {
+        $('#reportsTable').DataTable({
+            responsive: true,
+            pageLength: 10,
+            dom: 'frtip',
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+            },
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Fecha
+                { responsivePriority: 2, targets: 3, className: 'dt-body-right' } // Monto
+            ]
+        });
+    }
 
     // Inicializar modales
     $('.modal').modal({

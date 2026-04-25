@@ -40,8 +40,12 @@ class ExpensesController
     public function create($data)
     {
         // Validación estricta
-        if (empty($data['description']) || empty($data['amount']) || empty($data['payment_method'])) {
-            $this->respondError('Todos los campos obligatorios deben ser completados.');
+        if (empty($data['loan_id']) && empty($data['description'])) {
+            $this->respondError('La descripción es obligatoria.');
+        }
+
+        if (empty($data['amount']) || empty($data['payment_method'])) {
+            $this->respondError('Monto y método de pago son obligatorios.');
         }
 
         if (empty($data['date'])) {

@@ -94,7 +94,11 @@ class Router
         }
 
         // Llamar al método correspondiente pasando los argumentos
-        call_user_func_array([$controller, $methodName], $args);
+        try {
+            call_user_func_array([$controller, $methodName], $args);
+        } catch (\Exception $e) {
+            $this->handleError($e->getMessage());
+        }
     }
 
     private function handleError($message)

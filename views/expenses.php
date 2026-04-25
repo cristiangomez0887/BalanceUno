@@ -157,7 +157,7 @@ on>
                             <option value="<?= $loan['id'] ?>"><?= $loan['loan'] ?> - $<?= number_format($loan['pendiente'], 0, ",", ".") ?> COP</option>
                         <?php endforeach ?>
                     </select>
-                    <label>Método de pago</label>
+                    <label>Seleccionar Préstamo</label>
                 </div>
                 <div class="input-field">
                     <input type="text" class="datepicker" name="date" value="<?= date('d/m/Y') ?>" required>
