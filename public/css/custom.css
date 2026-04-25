@@ -225,13 +225,110 @@ td {
 .reports-color-text { color: var(--info) !important; }
 .loans-color-text { color: var(--loans) !important; }
 
-/* --- Responsive --- */
+/* --- DataTables Responsive Custom Styles --- */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before {
+    background-color: var(--secondary) !important;
+    border: none !important;
+    box-shadow: var(--shadow-sm) !important;
+    font-family: 'Material Icons';
+    content: '\e145' !important; /* add icon */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    height: 20px;
+    width: 20px;
+    border-radius: 4px;
+}
+
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control::before,
+table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th.dtr-control::before {
+    background-color: var(--error) !important;
+    content: '\e15b' !important; /* remove icon */
+}
+
+/* Fix for horizontal scroll on small screens */
+.dashboard-box {
+    overflow-x: hidden;
+}
+
+.dataTables_wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 @media (max-width: 600px) {
     .nav-app { padding: 10px 15px !important; }
     .app-name { font-size: 1.3rem; }
     .logo-img { height: 35px; }
     .dashboard-box { padding: 15px; }
     .action-btn { width: 100%; margin: 5px 0; }
+    
+    /* Make DataTables filters stack on mobile */
+    .dataTables_filter {
+        text-align: left !important;
+        margin-top: 10px;
+    }
+    .dataTables_filter input {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* --- Login Page --- */
+.login-body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    background-color: var(--bg-app) !important;
+}
+
+.login-main {
+    flex: 1 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+}
+
+.login-logo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--secondary);
+    margin-bottom: 10px;
+    letter-spacing: -0.05em;
+}
+
+/* --- Modal Fixes --- */
+.modal { 
+    max-height: 90% !important; 
+    overflow-y: auto !important; 
+    border-radius: 20px !important;
+}
+
+@media only screen and (max-width: 600px) {
+    .modal { 
+        width: 100% !important; 
+        height: 100% !important; 
+        top: 0 !important; 
+        margin: 0 !important; 
+        border-radius: 0 !important; 
+        max-height: 100% !important; 
+    }
+    .modal .modal-content { 
+        overflow-y: auto !important; 
+        padding: 20px !important;
+    }
 }
 
 footer {

@@ -40,6 +40,7 @@ $(document).ready(function () {
     if (typeof $.fn.DataTable === 'function' && $('#incomesTable').length) {
         $('#incomesTable').DataTable({
             responsive: true,
+            autoWidth: false,
             pageLength: 10,
             dom: 'frtip', // sin selector de cantidad de registros
             order: [[0, 'desc']], // ordenar por fecha descendente
@@ -70,6 +71,7 @@ $(document).ready(function () {
     if (typeof $.fn.DataTable === 'function' && $('#expensesTable').length) {
         $('#expensesTable').DataTable({
             responsive: true,
+            autoWidth: false,
             pageLength: 10,
             dom: 'frtip', // sin selector de cantidad de registros
             language: {
@@ -99,6 +101,7 @@ $(document).ready(function () {
     if (typeof $.fn.DataTable === 'function' && $('#loansTable').length) {
         $('#loansTable').DataTable({
             responsive: true,
+            autoWidth: false,
             pageLength: 10,
             dom: 'frtip', // sin selector de cantidad de registros
             language: {
@@ -122,6 +125,7 @@ $(document).ready(function () {
     if (typeof $.fn.DataTable === 'function' && $('#balanceTable').length) {
         $('#balanceTable').DataTable({
             responsive: true,
+            autoWidth: false,
             pageLength: 10,
             dom: 'frtip',
             language: {
@@ -146,6 +150,7 @@ $(document).ready(function () {
     if (typeof $.fn.DataTable === 'function' && $('#reportsTable').length) {
         $('#reportsTable').DataTable({
             responsive: true,
+            autoWidth: false,
             pageLength: 10,
             dom: 'frtip',
             language: {
@@ -157,6 +162,13 @@ $(document).ready(function () {
             ]
         });
     }
+
+    // Recalcular columnas al redimensionar (Fix para Materialize Tabs/Modals)
+    $(window).on('resize', function () {
+        if (typeof $.fn.DataTable === 'function') {
+            $('.dataTable').DataTable().columns.adjust().responsive.recalc();
+        }
+    });
 
     // Inicializar modales
     $('.modal').modal({

@@ -74,7 +74,7 @@ include __DIR__ . '/partials/navbar.php';
             <!-- Tabla de detalle -->
             <div style="margin-top: 50px;">
                 <h5 style="font-weight: 700; color: var(--primary); margin-bottom: 20px;">Desglose de Movimientos</h5>
-                <table id="reportsTable" class="highlight responsive-table" style="width:100%">
+                <table id="reportsTable" class="highlight display nowrap" style="width:100%">
                     <thead>
                         <tr>
                             <th>Fecha</th>

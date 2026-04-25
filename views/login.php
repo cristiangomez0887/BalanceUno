@@ -4,43 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - BalanceUno</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Materialize CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-            background: #f5f5f5;
-        }
-        main {
-            flex: 1 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .login-box {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .brand-logo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #26a69a;
-            margin-bottom: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../public/css/custom.css">
 </head>
-<body>
-    <main>
-        <div class="login-box z-depth-2">
+<body class="login-body">
+    <main class="login-main">
+        <div class="login-box">
             <div class="center-align">
-                <div class="brand-logo">BalanceUno</div>
-                <h5 class="grey-text text-darken-2">Iniciar Sesión</h5>
+                <div class="login-logo">BalanceUno</div>
+                <h5 class="grey-text text-darken-2" style="font-weight: 500; margin-bottom: 30px;">Iniciar Sesión</h5>
             </div>
 
             <?php if (isset($error)): ?>

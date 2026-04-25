@@ -4,14 +4,6 @@ $useDataTables = true;
 $pageTitle = "Ingresos";
 $pageIcon = "trending_up";
 
-$extraStyles = '
-<style>
-    .modal { max-height: 90% !important; overflow-y: auto !important; }
-    @media only screen and (max-width: 480px) {
-        .modal { width: 100% !important; height: 100% !important; top: 0 !important; margin: 0 !important; border-radius: 0 !important; max-height: 100% !important; }
-        .modal .modal-content { overflow-y: auto !important; }
-    }
-</style>';
 
 include __DIR__ . '/partials/header.php'; 
 include __DIR__ . '/partials/navbar.php'; 
@@ -38,7 +30,7 @@ include __DIR__ . '/partials/navbar.php';
                 </div>
             </div>
 
-            <table id="incomesTable" class="highlight responsive-table" style="width:100%">
+            <table id="incomesTable" class="highlight display nowrap" style="width:100%">
                 <thead>
                     <tr>
                         <th>Fecha</th>

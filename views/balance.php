@@ -96,7 +96,7 @@ include __DIR__ . '/partials/navbar.php';
             <!-- Detalle completo -->
             <div style="margin-top: 50px;">
                 <h5 style="font-weight: 700; color: var(--primary); margin-bottom: 20px;">Detalle de Movimientos</h5>
-                <table id="balanceTable" class="highlight responsive-table" style="width:100%">
+                <table id="balanceTable" class="highlight display nowrap" style="width:100%">
                     <thead>
                         <tr>
                             <th>Fecha</th>
