@@ -73,6 +73,7 @@ include __DIR__ . '/partials/navbar.php';
                                     </h5>
                                     <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($income['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($income['date'])) ?></strong>?</p>
                                     <form method="POST" action="?action=deleteIncome">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                                         <input type="hidden" name="id" value="<?= $income['id'] ?>">
                                         <button type="submit" class="btn red">Eliminar</button>
                                         <a href="#!" class="modal-close btn grey">Cancelar</a>
@@ -93,6 +94,7 @@ include __DIR__ . '/partials/navbar.php';
                 <i class="material-icons left">add</i> Nuevo Ingreso
             </h5>
             <form method="POST" action="?action=createIncome">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <div class="input-field">
                     <input type="text" class="datepicker" name="date" value="<?= date('d/m/Y') ?>" required>
                     <label>Fecha</label>
@@ -133,6 +135,7 @@ include __DIR__ . '/partials/navbar.php';
                 <i class="material-icons left">add</i> Ingreso Préstamo
             </h5>
             <form method="POST" action="?action=createLoan">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <div class="input-field">
                     <input type="text" class="datepicker" name="date" value="<?= date('d/m/Y') ?>" required>
                     <label>Fecha</label>
@@ -169,6 +172,7 @@ include __DIR__ . '/partials/navbar.php';
                 <i class="material-icons left">edit</i> Editar Ingreso
             </h5>
             <form method="POST" action="?action=updateIncome">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <input type="hidden" name="id">
                 <div class="input-field">
                     <input type="text" class="datepicker" name="date" required>

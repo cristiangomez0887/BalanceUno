@@ -13,6 +13,21 @@ class ExpensesController
         $this->model = new Expense($db);
     }
 
+    private function isAjax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+    }
+
+    private function respondError($message)
+    {
+        if ($this->isAjax()) {
+            echo json_encode(['success' => false, 'message' => $message]);
+        } else {
+            die($message);
+        }
+        exit;
+    }
+
     // Listar gastos
     public function index()
     {
@@ -24,6 +39,11 @@ class ExpensesController
     // Crear gasto
     public function create($data)
     {
+        // Validación estricta
+        if (empty($data['description']) || empty($data['amount']) || empty($data['payment_method'])) {
+            $this->respondError('Todos los campos obligatorios deben ser completados.');
+        }
+
         if (empty($data['date'])) {
             $data['date'] = date('Y-m-d'); // formato ISO
         } else {
@@ -33,15 +53,16 @@ class ExpensesController
             }
         }
 
-        // Recibir datos del formulario
-        $amount = $data['amount'];
-
         // Normalizar: quitar puntos de miles y convertir coma en punto decimal
-        $amount = str_replace('.', '', $amount);
+        $amount = str_replace('.', '', $data['amount']);
         $amount = str_replace(',', '.', $amount);
 
         // Convertir a número
         $data['amount'] = (float) $amount;
+
+        if ($data['amount'] <= 0) {
+            $this->respondError('El monto debe ser un valor positivo.');
+        }
 
         $this->model->create($data);
         header("Location: ?action=expenses");

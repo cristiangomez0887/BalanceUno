@@ -49,6 +49,13 @@ class Router
 
     public function handleRequest($action)
     {
+        // Validación CSRF para todas las peticiones POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                $this->handleError('Error de seguridad: Token CSRF inválido.');
+            }
+        }
+
         // Si la acción no existe en las rutas, se va por defecto al dashboard
         if (!array_key_exists($action, $this->routes)) {
             $action = 'dashboard';
@@ -75,5 +82,18 @@ class Router
 
         // Llamar al método correspondiente pasando los argumentos
         call_user_func_array([$controller, $methodName], $args);
+    }
+
+    private function handleError($message)
+    {
+        // Si es AJAX, responder con JSON
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => $message]);
+        } else {
+            // Si es petición normal, mostrar error simple o redirigir
+            die($message);
+        }
+        exit;
     }
 }
