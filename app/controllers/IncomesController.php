@@ -52,32 +52,24 @@ class IncomesController
     // Editar ingreso
     public function update($id, $data)
     {
-        // Recuperar el registro actual
-        $existing = $this->model->findById($id);
-
-        // Si viene fecha en el formulario, convertirla al formato ISO
         if (!empty($data['date'])) {
             $parts = explode('/', $data['date']);
             if (count($parts) === 3) {
                 $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
             }
-        } else {
-            // Si no viene fecha, conservar la original
-            $data['date'] = $existing['date'];
         }
 
-        // Recibir datos del formulario
-        $amount = $data['amount'];
-
-        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
-        $amount = str_replace('.', '', $amount);
+        $amount = str_replace('.', '', $data['amount']);
         $amount = str_replace(',', '.', $amount);
-
-        // Convertir a número
         $data['amount'] = (float) $amount;
 
-
         $this->model->update($id, $data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Ingreso actualizado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
     }
@@ -86,8 +78,19 @@ class IncomesController
     public function delete($id)
     {
         $this->model->softDelete($id);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Ingreso eliminado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
+    }
+
+    private function isAjax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 
     // Exportar a Excel

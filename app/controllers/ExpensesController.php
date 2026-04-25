@@ -25,7 +25,7 @@ class ExpensesController
     public function create($data)
     {
         if (empty($data['date'])) {
-            $data['date'] = date('Y-m-d'); // formato ISO
+            $data['date'] = date('Y-m-d');
         } else {
             $parts = explode('/', $data['date']);
             if (count($parts) === 3) {
@@ -33,47 +33,55 @@ class ExpensesController
             }
         }
 
-        // Recibir datos del formulario
-        $amount = $data['amount'];
-
-        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
-        $amount = str_replace('.', '', $amount);
+        $amount = str_replace('.', '', $data['amount']);
         $amount = str_replace(',', '.', $amount);
-
-        // Convertir a número
         $data['amount'] = (float) $amount;
 
-        $this->model->create($data);
+        try {
+            $id = $this->model->create($data);
+            if ($this->isAjax()) {
+                echo json_encode(['success' => true, 'message' => 'Gasto creado correctamente', 'id' => $id]);
+                exit;
+            }
+        } catch (\Exception $e) {
+            if ($this->isAjax()) {
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                exit;
+            }
+            // Para flujo normal, podrías manejar el error aquí
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
 
-
     // Editar gasto
     public function update($id, $data)
     {
-        $existing = $this->model->findById($id);
-
         if (!empty($data['date'])) {
             $parts = explode('/', $data['date']);
             if (count($parts) === 3) {
                 $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
             }
-        } else {
-            $data['date'] = $existing['date'];
         }
 
-        // Recibir datos del formulario
-        $amount = $data['amount'];
-
-        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
-        $amount = str_replace('.', '', $amount);
+        $amount = str_replace('.', '', $data['amount']);
         $amount = str_replace(',', '.', $amount);
-
-        // Convertir a número
         $data['amount'] = (float) $amount;
 
-        $this->model->update($id, $data);
+        try {
+            $this->model->update($id, $data);
+            if ($this->isAjax()) {
+                echo json_encode(['success' => true, 'message' => 'Gasto actualizado correctamente']);
+                exit;
+            }
+        } catch (\Exception $e) {
+            if ($this->isAjax()) {
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                exit;
+            }
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
@@ -82,8 +90,19 @@ class ExpensesController
     public function delete($id)
     {
         $this->model->softDelete($id);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Gasto eliminado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
+    }
+
+    private function isAjax()
+    {
+        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 
     // Exportar a Excel
