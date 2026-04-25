@@ -214,17 +214,80 @@ $(document).ready(function () {
     });
 
     // Antes de enviar, copiar el valor del select al hidden
-    $('#modalEditIncome .modal-content form').on('submit', function () {
+    $('#modalEditIncome .modal-content form').on('submit', function (e) {
+        e.preventDefault();
         const val = $('#modal_payment_method').val();
         $('#payment_method_hidden').val(val);
-
+        handleAjaxSubmit($(this));
     });
 
     // Antes de enviar, copiar el valor del select al hidden
-    $('#modalEditExpense .modal-content form').on('submit', function () {
+    $('#modalEditExpense .modal-content form').on('submit', function (e) {
+        e.preventDefault();
         const val = $('#modal_payment_method').val();
         $('#payment_method_hidden').val(val);
+        handleAjaxSubmit($(this));
     });
+
+    // Manejar todos los demás formularios de modales (crear, eliminar) de forma genérica
+    $('.modal form').not('#modalEditIncome form').not('#modalEditExpense form').on('submit', function (e) {
+        e.preventDefault();
+        handleAjaxSubmit($(this));
+    });
+
+    function handleAjaxSubmit($form) {
+        const url = $form.attr('action');
+        const formData = $form.serialize();
+
+        // Mostrar cargando
+        Swal.fire({
+            title: 'Procesando...',
+            didOpen: () => {
+                Swal.showLoading();
+            },
+            allowOutsideClick: false
+        });
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: formData,
+            dataType: 'json',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: res.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: res.message || 'Ocurrió un error inesperado'
+                    });
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = 'No se pudo comunicar con el servidor';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMsg
+                });
+            }
+        });
+    }
 
     // Función para convertir dd/mm/yyyy a Date
     function parseDate(str) {

@@ -66,6 +66,12 @@ class IncomesController
         }
 
         $this->model->create($data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Ingreso creado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
     }
@@ -99,6 +105,12 @@ class IncomesController
 
 
         $this->model->update($id, $data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Ingreso actualizado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
     }
@@ -107,6 +119,12 @@ class IncomesController
     public function delete($id)
     {
         $this->model->softDelete($id);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Ingreso eliminado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=incomes");
         exit;
     }

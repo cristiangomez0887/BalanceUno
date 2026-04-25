@@ -65,6 +65,12 @@ class ExpensesController
         }
 
         $this->model->create($data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Gasto creado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
@@ -73,28 +79,24 @@ class ExpensesController
     // Editar gasto
     public function update($id, $data)
     {
-        $existing = $this->model->findById($id);
-
         if (!empty($data['date'])) {
             $parts = explode('/', $data['date']);
             if (count($parts) === 3) {
                 $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
             }
-        } else {
-            $data['date'] = $existing['date'];
         }
 
-        // Recibir datos del formulario
-        $amount = $data['amount'];
-
-        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
-        $amount = str_replace('.', '', $amount);
+        $amount = str_replace('.', '', $data['amount']);
         $amount = str_replace(',', '.', $amount);
-
-        // Convertir a número
         $data['amount'] = (float) $amount;
 
         $this->model->update($id, $data);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Gasto actualizado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
@@ -103,6 +105,12 @@ class ExpensesController
     public function delete($id)
     {
         $this->model->softDelete($id);
+
+        if ($this->isAjax()) {
+            echo json_encode(['success' => true, 'message' => 'Gasto eliminado correctamente']);
+            exit;
+        }
+
         header("Location: ?action=expenses");
         exit;
     }
