@@ -1,43 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
+<?php 
+$title = "Balance";
+$useDataTables = true;
+$pageTitle = "Balance";
+$pageIcon = "assessment";
+$navColor = "accent-color";
 
-<head>
-    <meta charset="UTF-8">
-    <title>BalanceUno - Balance</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Materialize CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-    <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css" rel="stylesheet">
-    <!-- Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../public/css/custom.css">
-</head>
+include __DIR__ . '/partials/header.php'; 
+include __DIR__ . '/partials/navbar.php'; 
+?>
 
-<body class="container">
-
-    <!-- Barra superior -->
-    <nav class="primary-color">
-        <div class="nav-wrapper nav-app">
-            <div class="logo-app">
-                <img src="../public/assets/logo.png" alt="BalanceUno" class="logo-img">
-                <span class="app-name">Balance Uno</span>
-            </div>
-        </div>
-    </nav>
-    <nav class="accent-color">
-        <div class="nav-wrapper nav-app">
-            <a href="?action=dashboard" class="btn-back">
-                <i class="material-icons">arrow_back</i>
-            </a>
-            <div class="title-app">
-                <i class="material-icons">assessment</i>
-                <h3>Balance</h3>
-            </div>
-        </div>
-    </nav>
     <section id="main">
         <!-- Card principal -->
         <div class="card">
@@ -187,19 +158,8 @@
             </div>
         </div>
     </section>
-    <!-- Footer -->
-    <footer class="page-footer primary-color">
-        <div class="container center-align">
-            © 2026 BalanceUno — Hecho con ❤️
-        </div>
-    </footer>
 
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="../public/js/init.js"></script>
-</body>
-
-</html>
+<?php 
+include __DIR__ . '/partials/footer.php'; 
+include __DIR__ . '/partials/scripts.php'; 
+?>
