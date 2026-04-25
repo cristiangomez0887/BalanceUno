@@ -18,75 +18,89 @@ include __DIR__ . '/partials/header.php';
 include __DIR__ . '/partials/navbar.php'; 
 ?>
 
-    <section id="main">
-        <!-- Card con tabla de ingresos -->
-        <div class="card">
-            <div class="card-content">
-                <div class="right-align">
+    <section id="main" class="container">
+        <!-- Dashboard-box para la tabla -->
+        <div class="dashboard-box">
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col s12 m6">
+                    <h5 style="font-weight: 700; color: var(--primary);">Historial de Gastos</h5>
+                    <p class="grey-text">Controla todas tus salidas de dinero</p>
+                </div>
+                <div class="col s12 m6 right-align">
                     <a href="#modalCreateExpense" class="btn error-color modal-trigger action-btn">
-                        <i class="material-icons left">add</i> Nuevo Gasto
+                        <i class="material-icons left">add_circle</i> Nuevo
                     </a>
                     <a href="#modalCreateLoanPayment" class="btn loans-color modal-trigger action-btn">
-                        <i class="material-icons left">add</i> Pago a Préstamo
+                        <i class="material-icons left">payments</i> Pago Préstamo
                     </a>
                     <a href="?action=exportExpensesXls" class="btn reports-color action-btn">
-                        <i class="material-icons left">file_download</i> Exportar XLS
+                        <i class="material-icons left">file_download</i> Excel
                     </a>
                 </div>
-                <table id="expensesTable" class="striped display nowrap" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Descripción</th>
-                            <th>Monto</th>
-                            <th>Método</th>
-                            <th>Código</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($expenses as $expense): ?>
-                            <tr>
-                                <td><?= date('d/m/Y', strtotime($expense['date'])) ?></td>
-                                <td><?= htmlspecialchars($expense['description']) ?></td>
-                                <td>$<?= number_format($expense['amount'], 0, ",", ".") ?> COP</td>
-                                <td><?= htmlspecialchars($expense['payment_method']) ?></td>
-                                <td><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
-                                <td>
-                                    <a href="#modalEditExpense" class="btn-small blue modal-trigger"
-                                        data-id="<?= $expense['id'] ?>
-                                    " data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
-                                        data-description="<?= htmlspecialchars($expense['description']) ?>"
-                                        data-amount="<?= htmlspecialchars($expense['amount']) ?>"
-                                        data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
-                                        data-code="<?= htmlspecialchars($expense['code']) ?>">
-                                        <i class="material-icons">edit</i>
-                                    </a>
-                                    <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-small error-color modal-trigger">
-                                        <i class="material-icons">delete</i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <div id="modalDeleteExpense<?= $expense['id'] ?>" class="modal">
-                                <div class="modal-content center-align">
-                                    <h5 class="error-color-text">
-                                        <i class="material-icons left">delete</i> Eliminar Gasto
-                                    </h5>
-                                    <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($expense['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($expense['date'])) ?></strong>?</p>
-                                    <form method="POST" action="?action=deleteExpense">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                        <input type="hidden" name="id" value="<?= $expense['id'] ?>">
-                                        <button type="submit" class="btn error-color">Eliminar</button>
-                                        <a href="#!" class="modal-close btn grey">Cancelar</a>
-                                    </form>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
             </div>
+
+            <table id="expensesTable" class="highlight responsive-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th class="right-align">Monto</th>
+                        <th>Método</th>
+                        <th>Código</th>
+                        <th class="center-align">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($expenses as $expense): ?>
+                        <tr>
+                            <td style="font-weight: 500;"><?= date('d/m/Y', strtotime($expense['date'])) ?></td>
+                            <td><?= htmlspecialchars($expense['description']) ?></td>
+                            <td class="right-align error-color-text" style="font-weight: 600;">
+                                $<?= number_format($expense['amount'], 0, ",", ".") ?>
+                            </td>
+                            <td>
+                                <span class="badge grey lighten-3 black-text" style="float: none; border-radius: 4px;">
+                                    <?= htmlspecialchars($expense['payment_method']) ?>
+                                </span>
+                            </td>
+                            <td class="grey-text"><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
+                            <td class="center-align">
+                                <a href="#modalEditExpense" class="btn-flat waves-effect modal-trigger" style="color: var(--info);"
+                                    data-id="<?= $expense['id'] ?>"
+                                    data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
+                                    data-description="<?= htmlspecialchars($expense['description']) ?>"
+                                    data-amount="<?= htmlspecialchars($expense['amount']) ?>"
+                                    data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
+                                    data-code="<?= htmlspecialchars($expense['code']) ?>">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                                <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--error);">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Modal Eliminar -->
+                        <div id="modalDeleteExpense<?= $expense['id'] ?>" class="modal">
+                            <div class="modal-content center-align">
+                                <div style="background: #fee2e2; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                                    <i class="material-icons error-color-text" style="font-size: 35px;">warning</i>
+                                </div>
+                                <h5 style="font-weight: 700;">¿Eliminar Gasto?</h5>
+                                <p class="grey-text">Estás a punto de borrar: <br><strong><?= htmlspecialchars($expense['description']) ?></strong></p>
+                                <form method="POST" action="?action=deleteExpense" style="margin-top: 30px;">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <input type="hidden" name="id" value="<?= $expense['id'] ?>">
+                                    <button type="submit" class="btn error-color">Confirmar Eliminación</button>
+                                    <a href="#!" class="modal-close btn-flat grey-text">Cancelar</a>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </section>
+on>
 
     <!-- Modal Crear Gasto -->
     <div id="modalCreateExpense" class="modal">

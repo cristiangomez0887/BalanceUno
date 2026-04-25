@@ -17,73 +17,86 @@ include __DIR__ . '/partials/header.php';
 include __DIR__ . '/partials/navbar.php'; 
 ?>
 
-    <section id="main">
-        <!-- Card con tabla de ingresos -->
-        <div class="card">
-            <div class="card-content">
-                <div class="right-align">
+    <section id="main" class="container">
+        <!-- Dashboard-box para la tabla -->
+        <div class="dashboard-box">
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col s12 m6">
+                    <h5 style="font-weight: 700; color: var(--primary);">Historial de Ingresos</h5>
+                    <p class="grey-text">Gestiona todas tus entradas de dinero</p>
+                </div>
+                <div class="col s12 m6 right-align">
                     <a href="#modalCreateIncome" class="btn secondary-color modal-trigger action-btn">
-                        <i class="material-icons left">add</i> Nuevo Ingreso
+                        <i class="material-icons left">add</i> Nuevo
                     </a>
                     <a href="#modalCreateIncomeLoan" class="btn loans-color modal-trigger action-btn">
-                        <i class="material-icons left">add</i> Ingreso Préstamo
+                        <i class="material-icons left">sync</i> Préstamo
                     </a>
                     <a href="?action=exportIncomesXls" class="btn reports-color action-btn">
-                        <i class="material-icons left">file_download</i> Exportar XLS
+                        <i class="material-icons left">file_download</i> Excel
                     </a>
                 </div>
-                <table id="incomesTable" class="striped display nowrap" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Descripción</th>
-                            <th class="col-monto">Monto</th>
-                            <th>Método</th>
-                            <th>Código</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($incomes as $income): ?>
-                            <tr>
-                                <td><?= date('d/m/Y', strtotime($income['date'])) ?></td>
-                                <td><?= htmlspecialchars($income['description']) ?></td>
-                                <td>$<?= number_format($income['amount'], 0, ",", ".") ?> COP</td>
-                                <td><?= htmlspecialchars($income['payment_method']) ?></td>
-                                <td><?= $income['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($income['code']) ?></td>
-                                <td>
-                                    <a href="#modalEditIncome" class="btn-small blue modal-trigger"
-                                        data-id="<?= $income['id'] ?>"
-                                        data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
-                                        data-description="<?= htmlspecialchars($income['description']) ?>"
-                                        data-amount="<?= htmlspecialchars($income['amount']) ?>"
-                                        data-payment_method="<?= htmlspecialchars($income['payment_method']) ?>"
-                                        data-code="<?= htmlspecialchars($income['code']) ?>">
-                                        <i class="material-icons">edit</i>
-                                    </a>
-                                    <a href="#modalDeleteIncome<?= $income['id'] ?>" class="btn-small red modal-trigger">
-                                        <i class="material-icons">delete</i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <div id="modalDeleteIncome<?= $income['id'] ?>" class="modal">
-                                <div class="modal-content center-align">
-                                    <h5 class="red-text">
-                                        <i class="material-icons left">delete</i> Eliminar Ingreso
-                                    </h5>
-                                    <p>¿Seguro que deseas eliminar el ingreso <strong><?= htmlspecialchars($income['description']) ?></strong> del <strong><?= date('d/m/Y', strtotime($income['date'])) ?></strong>?</p>
-                                    <form method="POST" action="?action=deleteIncome">
-                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                        <input type="hidden" name="id" value="<?= $income['id'] ?>">
-                                        <button type="submit" class="btn red">Eliminar</button>
-                                        <a href="#!" class="modal-close btn grey">Cancelar</a>
-                                    </form>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
             </div>
+
+            <table id="incomesTable" class="highlight responsive-table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th class="right-align">Monto</th>
+                        <th>Método</th>
+                        <th>Código</th>
+                        <th class="center-align">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($incomes as $income): ?>
+                        <tr>
+                            <td style="font-weight: 500;"><?= date('d/m/Y', strtotime($income['date'])) ?></td>
+                            <td><?= htmlspecialchars($income['description']) ?></td>
+                            <td class="right-align accent-color-text" style="font-weight: 600;">
+                                $<?= number_format($income['amount'], 0, ",", ".") ?>
+                            </td>
+                            <td>
+                                <span class="badge grey lighten-3 black-text" style="float: none; border-radius: 4px;">
+                                    <?= htmlspecialchars($income['payment_method']) ?>
+                                </span>
+                            </td>
+                            <td class="grey-text"><?= $income['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($income['code']) ?></td>
+                            <td class="center-align">
+                                <a href="#modalEditIncome" class="btn-flat waves-effect modal-trigger" style="color: var(--info);"
+                                    data-id="<?= $income['id'] ?>"
+                                    data-date="<?= date('d/m/Y', strtotime($income['date'])) ?>"
+                                    data-description="<?= htmlspecialchars($income['description']) ?>"
+                                    data-amount="<?= htmlspecialchars($income['amount']) ?>"
+                                    data-payment_method="<?= htmlspecialchars($income['payment_method']) ?>"
+                                    data-code="<?= htmlspecialchars($income['code']) ?>">
+                                    <i class="material-icons">edit</i>
+                                </a>
+                                <a href="#modalDeleteIncome<?= $income['id'] ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--error);">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </td>
+                        </tr>
+                        <!-- Modal Eliminar -->
+                        <div id="modalDeleteIncome<?= $income['id'] ?>" class="modal">
+                            <div class="modal-content center-align">
+                                <div style="background: #fee2e2; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                                    <i class="material-icons error-color-text" style="font-size: 35px;">warning</i>
+                                </div>
+                                <h5 style="font-weight: 700;">¿Eliminar Ingreso?</h5>
+                                <p class="grey-text">Estás a punto de borrar: <br><strong><?= htmlspecialchars($income['description']) ?></strong></p>
+                                <form method="POST" action="?action=deleteIncome" style="margin-top: 30px;">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <input type="hidden" name="id" value="<?= $income['id'] ?>">
+                                    <button type="submit" class="btn error-color">Confirmar Eliminación</button>
+                                    <a href="#!" class="modal-close btn-flat grey-text">Cancelar</a>
+                                </form>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
     </section>
 
