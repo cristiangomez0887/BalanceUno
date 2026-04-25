@@ -7,20 +7,20 @@ use PDOException;
 
 class Database
 {
+    private static $host = "localhost";
+    private static $db_name = "balanceuno";
+    private static $username = "root";
+    private static $password = "";
     private static $conn;
 
     public static function getConnection()
     {
-        $host = $_ENV['DB_HOST'] ?? 'localhost';
-        $db_name = $_ENV['DB_NAME'] ?? 'balanceuno';
-        $username = $_ENV['DB_USER'] ?? 'root';
-        $password = $_ENV['DB_PASS'] ?? '';
         if (self::$conn == null) {
             try {
                 self::$conn = new PDO(
-                    "mysql:host=$host;dbname=$db_name",
-                    $username,
-                    $password,
+                    "mysql:host=" . self::$host . ";dbname=" . self::$db_name,
+                    self::$username,
+                    self::$password,
                     array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
                 );
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

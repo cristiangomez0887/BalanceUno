@@ -35,17 +35,17 @@ class LoansController
             }
         }
 
-        $amount = str_replace('.', '', $data['amount']);
+        // Recibir datos del formulario
+        $amount = $data['amount'];
+
+        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
+        $amount = str_replace('.', '', $amount);
         $amount = str_replace(',', '.', $amount);
+
+        // Convertir a número
         $data['amount'] = (float) $amount;
 
-        $id = $this->model->create($data);
-
-        if ($this->isAjax()) {
-            echo json_encode(['success' => true, 'message' => 'Préstamo creado correctamente', 'id' => $id]);
-            exit;
-        }
-
+        $this->model->create($data);
         header("Location: ?action=incomes");
         exit;
     }
@@ -54,24 +54,28 @@ class LoansController
     // Editar gasto
     public function update($id, $data)
     {
+        $existing = $this->model->findById($id);
+
         if (!empty($data['date'])) {
             $parts = explode('/', $data['date']);
             if (count($parts) === 3) {
                 $data['date'] = $parts[2] . '-' . $parts[1] . '-' . $parts[0];
             }
+        } else {
+            $data['date'] = $existing['date'];
         }
 
-        $amount = str_replace('.', '', $data['amount']);
+        // Recibir datos del formulario
+        $amount = $data['amount'];
+
+        // Normalizar: quitar puntos de miles y convertir coma en punto decimal
+        $amount = str_replace('.', '', $amount);
         $amount = str_replace(',', '.', $amount);
+
+        // Convertir a número
         $data['amount'] = (float) $amount;
 
         $this->model->update($id, $data);
-
-        if ($this->isAjax()) {
-            echo json_encode(['success' => true, 'message' => 'Préstamo actualizado correctamente']);
-            exit;
-        }
-
         header("Location: ?action=expenses");
         exit;
     }
@@ -80,19 +84,8 @@ class LoansController
     public function delete($id)
     {
         $this->model->softDelete($id);
-
-        if ($this->isAjax()) {
-            echo json_encode(['success' => true, 'message' => 'Préstamo eliminado correctamente']);
-            exit;
-        }
-
         header("Location: ?action=expenses");
         exit;
-    }
-
-    private function isAjax()
-    {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 
     // Exportar a Excel
