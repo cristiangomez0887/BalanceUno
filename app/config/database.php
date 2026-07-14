@@ -7,7 +7,7 @@ use PDOException;
 
 class Database
 {
-    private static $conn;
+    private static ?PDO $conn = null;
 
     public static function getConnection()
     {

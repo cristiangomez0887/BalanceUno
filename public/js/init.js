@@ -169,7 +169,61 @@ $(document).ready(function () {
     });
   }
 
-  // Loan History DataTable
+  // Inventory DataTable
+  if (typeof $.fn.DataTable === "function" && $("#inventoryTable").length) {
+    $("#inventoryTable").DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      dom: "frtip",
+      order: [[1, "asc"]],
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+      },
+      columnDefs: [
+        { className: "dt-body-right", targets: [2, 3, 4, 5] },
+        { className: "dt-body-center", targets: 0 },
+        { orderable: false, targets: -1 }
+      ],
+    });
+  }
+
+  // Orders DataTable
+  if (typeof $.fn.DataTable === "function" && $("#ordersTable").length) {
+    $("#ordersTable").DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 10,
+      dom: "frtip",
+      order: [[0, "desc"]],
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+      },
+      columnDefs: [
+        { className: "dt-body-right", targets: 3 },
+        { className: "dt-body-center", targets: [0, 2, 4] },
+        { orderable: false, targets: -1 }
+      ],
+    });
+  }
+
+  // Movements History DataTable
+  let movementsHistoryTable;
+  if (typeof $.fn.DataTable === "function" && $("#movementsHistoryTable").length) {
+    movementsHistoryTable = $("#movementsHistoryTable").DataTable({
+      responsive: true,
+      autoWidth: false,
+      pageLength: 5,
+      dom: "frtip",
+      order: [[0, "desc"]],
+      language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+      },
+      columnDefs: [
+        { className: "dt-body-center", targets: [0, 1, 2] }
+      ],
+    });
+  }
   let loanHistoryTable;
   if (typeof $.fn.DataTable === "function" && $("#loanHistoryTable").length) {
     loanHistoryTable = $("#loanHistoryTable").DataTable({
@@ -252,6 +306,8 @@ $(document).ready(function () {
         var amount = $(trigger).data("amount");
         var payment_method = $(trigger).data("payment_method");
         var code = $(trigger).data("code");
+        var category_id = $(trigger).data("category_id");
+        var payment_status = $(trigger).data("payment_status");
 
         // Rellenar el formulario
         $('#modalEditExpense input[name="id"]').val(id);
@@ -267,6 +323,14 @@ $(document).ready(function () {
         }
 
         $('#modalEditExpense input[name="amount"]').val(formatNumber(amount));
+        
+        // Categoría select
+        $("#edit_expense_category_id option").prop("selected", false);
+        $('#edit_expense_category_id option[value="' + category_id + '"]').prop("selected", true);
+        $("#edit_expense_category_id").formSelect({
+          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+        });
+
         // 👇 Truco: marcar el option correcto ANTES de refrescar
         $("#modal_payment_method option").prop("selected", false); // limpiar
         $('#modal_payment_method option[value="' + payment_method + '"]').prop(
@@ -283,6 +347,13 @@ $(document).ready(function () {
         });
 
         $('#modalEditExpense input[name="code"]').val(code);
+
+        // Payment status select
+        $("#edit_expense_payment_status option").prop("selected", false);
+        $('#edit_expense_payment_status option[value="' + payment_status + '"]').prop("selected", true);
+        $("#edit_expense_payment_status").formSelect({
+          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+        });
       } else if (modal.id === "modalEditIncome") {
         // Obtener datos del botón
         var id = $(trigger).data("id");
@@ -291,6 +362,8 @@ $(document).ready(function () {
         var amount = $(trigger).data("amount");
         var payment_method = $(trigger).data("payment_method");
         var code = $(trigger).data("code");
+        var category_id = $(trigger).data("category_id");
+        var payment_status = $(trigger).data("payment_status");
 
         // Rellenar el formulario
         $('#modalEditIncome input[name="id"]').val(id);
@@ -316,6 +389,14 @@ $(document).ready(function () {
         }
 
         $('#modalEditIncome input[name="amount"]').val(formatNumber(amount));
+        
+        // Categoría select
+        $("#edit_income_category_id option").prop("selected", false);
+        $('#edit_income_category_id option[value="' + category_id + '"]').prop("selected", true);
+        $("#edit_income_category_id").formSelect({
+          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+        });
+
         // 👇 Truco: marcar el option correcto ANTES de refrescar
         $("#modal_payment_method option").prop("selected", false); // limpiar
         $('#modal_payment_method option[value="' + payment_method + '"]').prop(
@@ -332,6 +413,13 @@ $(document).ready(function () {
         });
 
         $('#modalEditIncome input[name="code"]').val(code);
+
+        // Payment status select
+        $("#edit_income_payment_status option").prop("selected", false);
+        $('#edit_income_payment_status option[value="' + payment_status + '"]').prop("selected", true);
+        $("#edit_income_payment_status").formSelect({
+          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+        });
       } else if (modal.id === "modalEditLoanPayment") {
         // Obtener datos del botón
         var id = $(trigger).data("id");
@@ -365,6 +453,35 @@ $(document).ready(function () {
         });
 
         $('#modalEditLoanPayment input[name="code"]').val(code);
+      } else if (modal.id === "modalEditCategory") {
+        var id = $(trigger).data("id");
+        var name = $(trigger).data("name");
+        var type = $(trigger).data("type");
+
+        $('#modalEditCategory input[name="id"]').val(id);
+        $('#modalEditCategory input[name="name"]').val(name);
+        
+        $("#edit_category_type option").prop("selected", false);
+        $('#edit_category_type option[value="' + type + '"]').prop("selected", true);
+        $("#edit_category_type").formSelect({
+          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+        });
+      } else if (modal.id === "modalEditProduct") {
+        var id = $(trigger).data("id");
+        var sku = $(trigger).data("sku");
+        var name = $(trigger).data("name");
+        var description = $(trigger).data("description");
+        var min_stock = $(trigger).data("min_stock");
+        var cost_price = $(trigger).data("cost_price");
+        var sale_price = $(trigger).data("sale_price");
+
+        $('#modalEditProduct input[name="id"]').val(id);
+        $('#modalEditProduct input[name="sku"]').val(sku);
+        $('#modalEditProduct input[name="name"]').val(name);
+        $('#modalEditProduct textarea[name="description"]').val(description);
+        $('#modalEditProduct input[name="min_stock"]').val(min_stock);
+        $('#modalEditProduct input[name="cost_price"]').val(formatNumber(cost_price));
+        $('#modalEditProduct input[name="sale_price"]').val(formatNumber(sale_price));
       }
     },
   });
@@ -667,4 +784,277 @@ $(document).ready(function () {
       $(this).val(formatNumber(num));
     }
   });
+
+  // Load Product Movements History via AJAX
+  $(document).on("click", ".btn-view-movements-history", function(e) {
+    e.preventDefault();
+    const productId = $(this).data("id");
+    const productName = $(this).data("name");
+    
+    $("#movementsProductName").text(productName);
+    
+    if (movementsHistoryTable) {
+        movementsHistoryTable.clear().draw();
+    }
+    
+    $.ajax({
+        url: "?action=getProductMovements&id=" + productId,
+        method: "GET",
+        dataType: "json",
+        success: function(res) {
+            if (res.success && movementsHistoryTable) {
+                res.data.forEach(function(mov) {
+                    const dateObj = new Date(mov.created_at);
+                    const formattedDate = dateObj.toLocaleDateString('es-ES') + ' ' + dateObj.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
+                    
+                    const typeBadge = mov.type === 'entrada' 
+                        ? '<span class="badge green white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Entrada</span>'
+                        : '<span class="badge red white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Salida</span>';
+                    
+                    const reference = mov.reference_type 
+                        ? (mov.reference_type.toUpperCase() + (mov.reference_id ? ' #' + mov.reference_id : ''))
+                        : '-';
+                    
+                    movementsHistoryTable.row.add([
+                        formattedDate,
+                        typeBadge,
+                        mov.quantity,
+                        reference,
+                        htmlspecialchars(mov.notes || '')
+                    ]);
+                });
+                movementsHistoryTable.draw(false);
+                setTimeout(function() {
+                    movementsHistoryTable.columns.adjust().responsive.recalc();
+                }, 200);
+            } else {
+                M.toast({html: res.message || 'Error al procesar datos', classes: 'error-color'});
+            }
+        },
+        error: function() {
+            M.toast({html: 'Error al cargar el historial', classes: 'error-color'});
+        }
+    });
+  });
+
+  // --- ORDERS FLOW LOGIC ---
+
+  // Recalcular el total del pedido al crear
+  function recalculateOrderTotals() {
+    let subtotal = 0;
+    $("#orderItemsContainer .item-row").each(function () {
+      const priceText = $(this).find(".input-item-price").val() || "0";
+      const price = parseFloat(priceText.replace(/\D/g, "")) || 0;
+      const qty = parseInt($(this).find(".input-item-qty").val()) || 0;
+      const rowSubtotal = price * qty;
+      
+      $(this).find(".label-item-subtotal").text(formatNumber(rowSubtotal));
+      subtotal += rowSubtotal;
+    });
+
+    $("#orderSubtotalVal").text(formatNumber(subtotal));
+
+    // Determinar tasa de impuesto
+    let taxRate = 0;
+    const taxSpan = $("#orderTaxVal");
+    if (taxSpan.length) {
+        const labelText = taxSpan.closest("span").text();
+        const match = labelText.match(/IVA\s*\((\d+(\.\d+)?)\%\)/i);
+        if (match) {
+            taxRate = parseFloat(match[1]);
+        }
+    }
+
+    const taxAmount = subtotal * (taxRate / 100);
+    const total = subtotal + taxAmount;
+
+    if (taxSpan.length) {
+        taxSpan.text(formatNumber(taxAmount));
+    }
+    $("#orderTotalVal").text(formatNumber(total));
+  }
+
+  // Escuchar cambios en productos del selector
+  $(document).on("change", ".select-order-product", function () {
+    const selectedOpt = $(this).find("option:selected");
+    const price = selectedOpt.data("price") || 0;
+    
+    const row = $(this).closest(".item-row");
+    row.find(".input-item-price").val(formatNumber(price));
+    recalculateOrderTotals();
+  });
+
+  // Escuchar cambios en cantidad
+  $(document).on("input change", ".input-item-qty", function () {
+    recalculateOrderTotals();
+  });
+
+  // Agregar nueva fila de producto
+  $("#btnAddNewOrderItem").on("click", function (e) {
+    e.preventDefault();
+    
+    // Clonar la primera fila
+    const firstRow = $("#orderItemsContainer .item-row").first();
+    const newRow = firstRow.clone();
+    
+    // Resetear valores en el clon
+    newRow.find("select").val("");
+    newRow.find(".input-item-price").val("");
+    newRow.find(".input-item-qty").val("1");
+    newRow.find(".label-item-subtotal").text("0");
+    
+    $("#orderItemsContainer").append(newRow);
+  });
+
+  // Eliminar fila de producto
+  $(document).on("click", ".btn-remove-item", function (e) {
+    e.preventDefault();
+    if ($("#orderItemsContainer .item-row").length > 1) {
+      $(this).closest(".item-row").remove();
+      recalculateOrderTotals();
+    } else {
+      M.toast({html: "El pedido debe tener al menos un producto.", classes: "error-color"});
+    }
+  });
+
+  // Enviar formulario de creación
+  $("#formCreateOrder").on("submit", function (e) {
+      e.preventDefault();
+      let valid = true;
+      $(".select-order-product").each(function() {
+          if (!$(this).val()) {
+              valid = false;
+          }
+      });
+      if (!valid) {
+          Swal.fire({ icon: "error", title: "Error", text: "Por favor, selecciona un producto para cada fila." });
+          return;
+      }
+      handleAjaxSubmit($(this));
+  });
+
+  // Ver detalles del pedido mediante AJAX
+  $(document).on("click", ".btn-view-order-details", function(e) {
+    e.preventDefault();
+    const orderId = $(this).data("id");
+    
+    $("#detailsItemsContainer").html("");
+    $("#detailsNotesContainer").hide();
+    
+    $.ajax({
+      url: "?action=getOrderItems&id=" + orderId,
+      method: "GET",
+      dataType: "json",
+      success: function(res) {
+        if (res.success) {
+          const order = res.data;
+          
+          $("#detailsOrderNumber").text(order.order_number);
+          $("#detailsCustomerName").text(order.customer_name);
+          
+          const dateObj = new Date(order.created_at);
+          $("#detailsOrderDate").text(dateObj.toLocaleDateString('es-ES'));
+          
+          // Badge de estado
+          const badge = $("#detailsOrderStatusBadge");
+          badge.removeClass("grey blue green red");
+          badge.text(order.status);
+          if (order.status === 'Borrador') badge.addClass("grey");
+          else if (order.status === 'Confirmado') badge.addClass("blue");
+          else if (order.status === 'Entregado') badge.addClass("green");
+          else badge.addClass("red");
+          
+          // Llenar ítems
+          order.items.forEach(function(item) {
+            const formattedPrice = '$' + formatNumber(item.unit_price);
+            const formattedSubtotal = '$' + formatNumber(item.subtotal);
+            
+            $("#detailsItemsContainer").append(`
+              <tr>
+                <td style="font-weight: 500;">\${htmlspecialchars(item.product_name)} <span class="grey-text" style="font-size:0.8rem;">(\${htmlspecialchars(item.sku || '')})</span></td>
+                <td class="right-align">\${formattedPrice}</td>
+                <td class="center-align">\${item.quantity}</td>
+                <td class="right-align" style="font-weight:600;">\${formattedSubtotal}</td>
+              </tr>
+            `);
+          });
+          
+          // Notas
+          if (order.notes) {
+              $("#detailsNotesText").text(order.notes);
+              $("#detailsNotesContainer").show();
+          }
+          
+          // Totales
+          $("#detailsSubtotalText").text('$' + formatNumber(order.subtotal));
+          if ($("#detailsTaxText").length) {
+              $("#detailsTaxText").text('$' + formatNumber(order.tax_amount));
+          }
+          $("#detailsTotalText").text('$' + formatNumber(order.total));
+          
+        } else {
+          M.toast({html: res.message || 'Error al cargar detalles', classes: 'error-color'});
+        }
+      },
+      error: function() {
+        M.toast({html: 'Error de comunicación con el servidor', classes: 'error-color'});
+      }
+    });
+  });
+
+  // Cambio de estado de pedido (Confirmar, Entregar, Cancelar)
+  $(document).on("click", ".btn-change-order-status", function(e) {
+    e.preventDefault();
+    const orderId = $(this).data("id");
+    const newStatus = $(this).data("status");
+    
+    let confirmTitle = '¿Confirmar pedido?';
+    let confirmText = 'Esto descontará los productos del inventario.';
+    let confirmBtn = 'Confirmar';
+    let confirmColor = '#2196f3';
+    
+    if (newStatus === 'Entregado') {
+        confirmTitle = '¿Marcar como Entregado?';
+        confirmText = 'Esto registrará la entrega y generará un ingreso financiero automático.';
+        confirmBtn = 'Marcar como Entregado';
+        confirmColor = '#4caf50';
+    } else if (newStatus === 'Cancelado') {
+        confirmTitle = '¿Cancelar pedido?';
+        confirmText = 'Esto cancelará el pedido y devolverá los productos al inventario si aplica.';
+        confirmBtn = 'Cancelar Pedido';
+        confirmColor = '#f44336';
+    } else if (newStatus === 'Borrador') {
+        confirmTitle = '¿Revertir a Borrador?';
+        confirmText = 'Esto regresará el pedido a borrador.';
+        confirmBtn = 'Revertir';
+        confirmColor = '#9e9e9e';
+    }
+    
+    Swal.fire({
+      title: confirmTitle,
+      text: confirmText,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: confirmColor,
+      cancelButtonColor: '#9e9e9e',
+      confirmButtonText: confirmBtn,
+      cancelButtonText: 'No, conservar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $("#changeStatusOrderId").val(orderId);
+        $("#changeStatusOrderVal").val(newStatus);
+        handleAjaxSubmit($("#formChangeOrderStatus"));
+      }
+    });
+  });
+
+  function htmlspecialchars(string) {
+    if (!string) return '';
+    return string
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 });

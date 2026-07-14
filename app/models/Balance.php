@@ -4,25 +4,25 @@ namespace App\Models;
 
 use PDO;
 
-class Balance
+class Balance extends BaseModel
 {
-    private $db;
-
     public function __construct($db)
     {
-        $this->db = $db;
+        parent::__construct($db, 'incomes'); // Usa incomes como tabla principal heredada
     }
 
     public function getData($startDate, $endDate)
     {
+        $companyId = $this->getCompanyId();
+
         // Ingresos
-        $stmt = $this->db->prepare("SELECT * FROM incomes WHERE date BETWEEN :start AND :end AND deleted_at IS NULL");
-        $stmt->execute([':start' => $startDate, ':end' => $endDate]);
+        $stmt = $this->db->prepare("SELECT * FROM incomes WHERE date BETWEEN :start AND :end AND company_id = :company_id AND deleted_at IS NULL");
+        $stmt->execute([':start' => $startDate, ':end' => $endDate, ':company_id' => $companyId]);
         $incomes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Gastos
-        $stmt = $this->db->prepare("SELECT * FROM expenses WHERE date BETWEEN :start AND :end AND deleted_at IS NULL");
-        $stmt->execute([':start' => $startDate, ':end' => $endDate]);
+        $stmt = $this->db->prepare("SELECT * FROM expenses WHERE date BETWEEN :start AND :end AND company_id = :company_id AND deleted_at IS NULL");
+        $stmt->execute([':start' => $startDate, ':end' => $endDate, ':company_id' => $companyId]);
         $expenses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         // Totales
@@ -47,7 +47,6 @@ class Balance
             $paymentSummary['Gastos'][$method] =
                 ($paymentSummary['Gastos'][$method] ?? 0) + $expense['amount'];
         }
-
 
         // Top 5 ingresos
         $topIncomes = $incomes;

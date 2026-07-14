@@ -5,7 +5,6 @@ $pageTitle = "Gastos";
 $pageIcon = "trending_down";
 $navColor = "error-color";
 
-
 include __DIR__ . '/partials/header.php';
 include __DIR__ . '/partials/navbar.php';
 ?>
@@ -36,9 +35,11 @@ include __DIR__ . '/partials/navbar.php';
                 <tr>
                     <th>Fecha</th>
                     <th>Descripción</th>
+                    <th>Categoría</th>
                     <th class="right-align">Monto</th>
                     <th>Método</th>
                     <th>Código</th>
+                    <th>Estado</th>
                     <th class="center-align">Acciones</th>
                 </tr>
             </thead>
@@ -47,6 +48,11 @@ include __DIR__ . '/partials/navbar.php';
                     <tr>
                         <td style="font-weight: 500;"><?= date('d/m/Y', strtotime($expense['date'])) ?></td>
                         <td><?= htmlspecialchars($expense['description']) ?></td>
+                        <td>
+                            <span class="grey-text text-darken-1" style="font-size: 0.9rem;">
+                                <?= isset($categoriesMap[$expense['category_id']]) ? htmlspecialchars($categoriesMap[$expense['category_id']]) : '-' ?>
+                            </span>
+                        </td>
                         <td class="right-align error-color-text" style="font-weight: 600;">
                             $<?= number_format($expense['amount'], 0, ",", ".") ?>
                         </td>
@@ -56,15 +62,24 @@ include __DIR__ . '/partials/navbar.php';
                             </span>
                         </td>
                         <td class="grey-text"><?= $expense['payment_method'] === 'Efectivo' ? '-' : htmlspecialchars($expense['code']) ?></td>
+                        <td>
+                            <?php if (($expense['payment_status'] ?? 'Pagado') === 'Pagado'): ?>
+                                <span class="badge green white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Pagado</span>
+                            <?php else: ?>
+                                <span class="badge orange white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Pendiente</span>
+                            <?php endif; ?>
+                        </td>
                         <td class="center-align">
-                            <a href="<?= !empty($expense['loan_id']) ? '#modalEditLoanPayment' : '#modalEditExpense' ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--info);"
+                            <a href="<?= !empty($expense['loan_id']) ? '#modalEditLoanPayment' : '#modalEditExpense' ?>" class="btn-flat waves-effect modal-trigger edit-expense-btn" style="color: var(--info);"
                                 data-id="<?= $expense['id'] ?>"
                                 data-date="<?= date('d/m/Y', strtotime($expense['date'])) ?>"
                                 data-description="<?= htmlspecialchars($expense['description']) ?>"
                                 data-amount="<?= htmlspecialchars($expense['amount']) ?>"
                                 data-payment_method="<?= htmlspecialchars($expense['payment_method']) ?>"
                                 data-code="<?= htmlspecialchars($expense['code']) ?>"
-                                data-loan_id="<?= $expense['loan_id'] ?? '' ?>">
+                                data-loan_id="<?= $expense['loan_id'] ?? '' ?>"
+                                data-category_id="<?= htmlspecialchars($expense['category_id'] ?? '') ?>"
+                                data-payment_status="<?= htmlspecialchars($expense['payment_status'] ?? 'Pagado') ?>">
                                 <i class="material-icons">edit</i>
                             </a>
                             <a href="#modalDeleteExpense<?= $expense['id'] ?>" class="btn-flat waves-effect modal-trigger" style="color: var(--error);">
@@ -111,6 +126,15 @@ include __DIR__ . '/partials/navbar.php';
                 <label>Descripción</label>
             </div>
             <div class="input-field">
+                <select name="category_id">
+                    <option value="" selected>Ninguna</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <label>Categoría</label>
+            </div>
+            <div class="input-field">
                 <input type="text" name="amount" required>
                 <label>Monto (COP)</label>
             </div>
@@ -127,13 +151,21 @@ include __DIR__ . '/partials/navbar.php';
                 <input type="text" name="code">
                 <label>Código (Nequi o Transferencia)</label>
             </div>
-            <div class="center-align">
+            <div class="input-field">
+                <select name="payment_status" required>
+                    <option value="Pagado" selected>Pagado</option>
+                    <option value="Pendiente">Pendiente</option>
+                </select>
+                <label>Estado de Pago</label>
+            </div>
+            <div class="center-align" style="margin-top: 20px;">
                 <button type="submit" class="btn error-color">Guardar</button>
                 <a href="#!" class="modal-close btn grey">Cancelar</a>
             </div>
         </form>
     </div>
 </div>
+
 <!-- Modal Pago Préstamo-->
 <div id="modalCreateLoanPayment" class="modal">
     <div class="modal-content">
@@ -179,6 +211,7 @@ include __DIR__ . '/partials/navbar.php';
         </form>
     </div>
 </div>
+
 <!-- Modal Editar Gasto -->
 <div id="modalEditExpense" class="modal">
     <div class="modal-content">
@@ -195,6 +228,15 @@ include __DIR__ . '/partials/navbar.php';
             <div class="input-field">
                 <input type="text" name="description" required>
                 <label class="active">Descripción</label>
+            </div>
+            <div class="input-field">
+                <select name="category_id" id="edit_expense_category_id">
+                    <option value="">Ninguna</option>
+                    <?php foreach ($categories as $cat): ?>
+                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <label>Categoría</label>
             </div>
             <div class="input-field">
                 <input type="text" name="amount" required>
@@ -215,7 +257,14 @@ include __DIR__ . '/partials/navbar.php';
                 <input type="text" name="code">
                 <label class="active">Código (Nequi o Transferencia)</label>
             </div>
-            <div class="center-align">
+            <div class="input-field">
+                <select name="payment_status" id="edit_expense_payment_status" required>
+                    <option value="Pagado">Pagado</option>
+                    <option value="Pendiente">Pendiente</option>
+                </select>
+                <label>Estado de Pago</label>
+            </div>
+            <div class="center-align" style="margin-top: 20px;">
                 <button type="submit" class="btn error-color">Actualizar</button>
                 <a href="#!" class="modal-close btn grey">Cancelar</a>
             </div>
@@ -274,7 +323,6 @@ include __DIR__ . '/partials/navbar.php';
         </form>
     </div>
 </div>
-
 
 <?php
 include __DIR__ . '/partials/footer.php';

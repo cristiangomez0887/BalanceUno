@@ -39,6 +39,10 @@ class AuthController
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
+            $_SESSION['user_name'] = $user['name'] ?? $user['username'];
+            $_SESSION['company_id'] = $user['company_id'];
+            $_SESSION['company_name'] = $user['company_name'];
+            $_SESSION['company_tax_rate'] = $user['company_tax_rate'];
             header("Location: ?action=dashboard");
             exit;
         } else {

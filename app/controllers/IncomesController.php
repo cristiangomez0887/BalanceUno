@@ -3,14 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\Income;
+use App\Models\Category;
 
 class IncomesController
 {
-
     private $model;
+    private $db;
 
     public function __construct($db)
     {
+        $this->db = $db;
         $this->model = new Income($db);
     }
 
@@ -33,6 +35,20 @@ class IncomesController
     public function index()
     {
         $incomes = $this->model->getAll();
+        
+        // Cargar categorías tipo 'ingreso'
+        $categoryModel = new Category($this->db);
+        $categories = $categoryModel->getByType('ingreso');
+
+        // Para mostrar nombres de categoría
+        // Mapear ingresos con nombre de su categoría
+        $categoriesMap = [];
+        foreach ($categories as $cat) {
+            $categoriesMap[$cat['id']] = $cat['name'];
+        }
+        // También cargar las categorías 'ambos' que podrían no estar mapeadas si no vinieron en getByType(ingreso)
+        // pero getByType('ingreso') devuelve tanto 'ingreso' como 'ambos'. Así que están cubiertas.
+
         include __DIR__ . '/../../views/incomes.php';
     }
 
@@ -81,6 +97,9 @@ class IncomesController
     {
         // Recuperar el registro actual
         $existing = $this->model->findById($id);
+        if (!$existing) {
+            $this->respondError('El ingreso no existe.');
+        }
 
         // Si viene fecha en el formulario, convertirla al formato ISO
         if (!empty($data['date'])) {
@@ -102,7 +121,6 @@ class IncomesController
 
         // Convertir a número
         $data['amount'] = (float) $amount;
-
 
         $this->model->update($id, $data);
 
@@ -136,9 +154,9 @@ class IncomesController
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=incomes.xls");
 
-        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\n";
+        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\tEstado Pago\n";
         foreach ($incomes as $income) {
-            echo "{$income['date']}\t{$income['description']}\t{$income['amount']}\t{$income['payment_method']}\t{$income['code']}\n";
+            echo "{$income['date']}\t{$income['description']}\t{$income['amount']}\t{$income['payment_method']}\t{$income['code']}\t{$income['payment_status']}\n";
         }
         exit;
     }

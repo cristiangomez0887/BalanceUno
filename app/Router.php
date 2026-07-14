@@ -45,6 +45,30 @@ class Router
         'deleteLoan'     => ['controller' => 'App\Controllers\LoansController', 'method' => 'delete', 'params' => ['$_POST[id]']],
         'exportLoansXls' => ['controller' => 'App\Controllers\LoansController', 'method' => 'exportXls'],
         'getLoanPayments'=> ['controller' => 'App\Controllers\LoansController', 'method' => 'getPayments', 'params' => ['$_GET[id]']],
+
+        // Categories
+        'categories'        => ['controller' => 'App\Controllers\CategoriesController', 'method' => 'index'],
+        'createCategory'    => ['controller' => 'App\Controllers\CategoriesController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateCategory'    => ['controller' => 'App\Controllers\CategoriesController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteCategory'    => ['controller' => 'App\Controllers\CategoriesController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+
+        // Inventory
+        'inventory'          => ['controller' => 'App\Controllers\InventoryController', 'method' => 'index'],
+        'createProduct'      => ['controller' => 'App\Controllers\InventoryController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateProduct'      => ['controller' => 'App\Controllers\InventoryController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteProduct'      => ['controller' => 'App\Controllers\InventoryController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+        'adjustStock'        => ['controller' => 'App\Controllers\InventoryController', 'method' => 'adjustStock', 'params' => ['$_POST']],
+        'getProductMovements'=> ['controller' => 'App\Controllers\InventoryController', 'method' => 'getMovements', 'params' => ['$_GET[id]']],
+        'exportInventoryXls' => ['controller' => 'App\Controllers\InventoryController', 'method' => 'exportXls'],
+
+        // Orders
+        'orders'             => ['controller' => 'App\Controllers\OrdersController', 'method' => 'index'],
+        'createOrder'        => ['controller' => 'App\Controllers\OrdersController', 'method' => 'create', 'params' => ['$_POST']],
+        'updateOrder'        => ['controller' => 'App\Controllers\OrdersController', 'method' => 'update', 'params' => ['$_POST[id]', '$_POST']],
+        'deleteOrder'        => ['controller' => 'App\Controllers\OrdersController', 'method' => 'delete', 'params' => ['$_POST[id]']],
+        'updateOrderStatus'  => ['controller' => 'App\Controllers\OrdersController', 'method' => 'updateStatus', 'params' => ['$_POST']],
+        'getOrderItems'      => ['controller' => 'App\Controllers\OrdersController', 'method' => 'getItems', 'params' => ['$_GET[id]']],
+        'exportOrdersXls'    => ['controller' => 'App\Controllers\OrdersController', 'method' => 'exportXls'],
     ];
 
     public function __construct()

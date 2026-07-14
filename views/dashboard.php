@@ -66,6 +66,27 @@ include __DIR__ . '/partials/navbar.php';
                     <p class="grey-text" style="font-size: 0.8rem;">Análisis detallado mensual</p>
                 </a>
             </div>
+            <div class="col s12 m6 l4">
+                <a href="?action=categories" class="card-panel waves-effect waves-block white center-align action-card" style="display: block; color: var(--text-main);">
+                    <i class="material-icons indigo-text" style="font-size: 3rem;">folder_special</i>
+                    <h6 style="font-weight: 600;">Categorías</h6>
+                    <p class="grey-text" style="font-size: 0.8rem;">Configurar tipos de movimientos</p>
+                </a>
+            </div>
+            <div class="col s12 m6 l4">
+                <a href="?action=inventory" class="card-panel waves-effect waves-block white center-align action-card" style="display: block; color: var(--text-main);">
+                    <i class="material-icons teal-text" style="font-size: 3rem;">store</i>
+                    <h6 style="font-weight: 600;">Inventario</h6>
+                    <p class="grey-text" style="font-size: 0.8rem;">Control de stock y precios</p>
+                </a>
+            </div>
+            <div class="col s12 m6 l4">
+                <a href="?action=orders" class="card-panel waves-effect waves-block white center-align action-card" style="display: block; color: var(--text-main);">
+                    <i class="material-icons blue-text" style="font-size: 3rem;">assignment</i>
+                    <h6 style="font-weight: 600;">Pedidos / Ventas</h6>
+                    <p class="grey-text" style="font-size: 0.8rem;">Órdenes, estados y facturación</p>
+                </a>
+            </div>
         </div>
     </div>
 </section>

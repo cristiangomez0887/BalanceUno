@@ -3,13 +3,16 @@
 namespace App\Controllers;
 
 use App\Models\Expense;
+use App\Models\Category;
 
 class ExpensesController
 {
     private $model;
+    private $db;
 
     public function __construct($db)
     {
+        $this->db = $db;
         $this->model = new Expense($db);
     }
 
@@ -33,6 +36,17 @@ class ExpensesController
     {
         $expenses = $this->model->getAll();
         $loans = $this->model->getLoans();
+
+        // Cargar categorías tipo 'gasto'
+        $categoryModel = new Category($this->db);
+        $categories = $categoryModel->getByType('gasto');
+
+        // Mapear categorías
+        $categoriesMap = [];
+        foreach ($categories as $cat) {
+            $categoriesMap[$cat['id']] = $cat['name'];
+        }
+
         include __DIR__ . '/../../views/expenses.php';
     }
 
@@ -78,7 +92,6 @@ class ExpensesController
         header("Location: ?action=expenses");
         exit;
     }
-
 
     // Editar gasto
     public function update($id, $data)
@@ -126,9 +139,9 @@ class ExpensesController
         header("Content-Type: application/vnd.ms-excel");
         header("Content-Disposition: attachment; filename=expenses.xls");
 
-        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\n";
+        echo "Fecha\tDescripción\tMonto\tMétodo\tCódigo\tEstado Pago\n";
         foreach ($expenses as $expense) {
-            echo "{$expense['date']}\t{$expense['description']}\t{$expense['amount']}\t{$expense['payment_method']}\t{$expense['code']}\n";
+            echo "{$expense['date']}\t{$expense['description']}\t{$expense['amount']}\t{$expense['payment_method']}\t{$expense['code']}\t{$expense['payment_status']}\n";
         }
         exit;
     }

@@ -15,8 +15,10 @@ class Expense extends BaseModel
     // Obtener todos los pagos de un préstamo específico
     public function getPaymentsByLoanId($loanId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL ORDER BY date DESC, id DESC");
-        $stmt->execute([':loan_id' => $loanId]);
+        $stmt = $this->db->prepare(
+            "SELECT * FROM expenses WHERE loan_id = :loan_id AND company_id = :company_id AND deleted_at IS NULL ORDER BY date DESC, id DESC"
+        );
+        $stmt->execute([':loan_id' => $loanId, ':company_id' => $this->getCompanyId()]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -27,10 +29,13 @@ class Expense extends BaseModel
         if (isset($data['loan_id'])) {
             $loanId = $data['loan_id'];
             $amount = $data['amount'];
+            $companyId = $this->getCompanyId();
 
             // 0. Traer nombre del préstamo
-            $stmt = $this->db->prepare("SELECT loan, amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
-            $stmt->execute([':loan_id' => $loanId]);
+            $stmt = $this->db->prepare(
+                "SELECT loan, amount FROM loans WHERE id = :loan_id AND company_id = :company_id AND deleted_at IS NULL"
+            );
+            $stmt->execute([':loan_id' => $loanId, ':company_id' => $companyId]);
             $loanData = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if (!$loanData) {
@@ -47,8 +52,9 @@ class Expense extends BaseModel
             $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) 
                                       FROM expenses 
                                       WHERE loan_id = :loan_id 
+                                      AND company_id = :company_id
                                       AND deleted_at IS NULL");
-            $stmt->execute([':loan_id' => $loanId]);
+            $stmt->execute([':loan_id' => $loanId, ':company_id' => $companyId]);
             $pagadoActual = $stmt->fetchColumn() ?? 0;
 
             // 3. Calcular saldo pendiente
@@ -60,16 +66,18 @@ class Expense extends BaseModel
             }
 
             // 5. Registrar pago (Filtrando datos)
-            $stmt = $this->db->prepare("INSERT INTO expenses (date, description, amount, payment_method, code, loan_id) 
-                                      VALUES (:date, :description, :amount, :payment_method, :code, :loan_id)");
+            $stmt = $this->db->prepare("INSERT INTO expenses (company_id, date, description, amount, payment_method, code, loan_id, payment_status) 
+                                      VALUES (:company_id, :date, :description, :amount, :payment_method, :code, :loan_id, :payment_status)");
             
             $stmt->execute([
-                ':date'           => $data['date'],
-                ':description'    => $data['description'],
-                ':amount'         => $data['amount'],
-                ':payment_method' => $data['payment_method'],
-                ':code'           => $data['code'] ?? null,
-                ':loan_id'        => $loanId
+                ':company_id'      => $companyId,
+                ':date'            => $data['date'],
+                ':description'     => $data['description'],
+                ':amount'          => $data['amount'],
+                ':payment_method'  => $data['payment_method'],
+                ':code'            => $data['code'] ?? null,
+                ':loan_id'         => $loanId,
+                ':payment_status'  => 'Pagado'
             ]);
 
             // 6. Recalcular saldo total y actualizar estado
@@ -77,21 +85,25 @@ class Expense extends BaseModel
             $nuevoPendiente = $prestado - $nuevoTotalPagado;
             $nuevoEstado = ($nuevoPendiente <= 1) ? 'Pagado' : 'Pendiente'; // 1 peso de tolerancia
 
-            $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id");
+            $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id AND company_id = :company_id");
             return $stmt->execute([
                 ':status' => $nuevoEstado,
-                ':loan_id' => $loanId
+                ':loan_id' => $loanId,
+                ':company_id' => $companyId
             ]);
         } else {
-            $stmt = $this->db->prepare("INSERT INTO expenses (date, description, amount, payment_method, code)
-                                      VALUES (:date, :description, :amount, :payment_method, :code)");
+            $stmt = $this->db->prepare("INSERT INTO expenses (company_id, date, description, amount, payment_method, code, category_id, payment_status)
+                                      VALUES (:company_id, :date, :description, :amount, :payment_method, :code, :category_id, :payment_status)");
 
             return $stmt->execute([
-                ':date'           => $data['date'],
-                ':description'    => $data['description'],
-                ':amount'         => $data['amount'],
-                ':payment_method' => $data['payment_method'],
-                ':code'           => $data['code'] ?? null
+                ':company_id'      => $this->getCompanyId(),
+                ':date'            => $data['date'],
+                ':description'     => $data['description'],
+                ':amount'          => $data['amount'],
+                ':payment_method'  => $data['payment_method'],
+                ':code'            => $data['code'] ?? null,
+                ':category_id'     => !empty($data['category_id']) ? $data['category_id'] : null,
+                ':payment_status'  => $data['payment_status'] ?? 'Pagado'
             ]);
         }
     }
@@ -104,6 +116,7 @@ class Expense extends BaseModel
             throw new Exception("El gasto no existe.");
         }
 
+        $companyId = $this->getCompanyId();
         $oldLoanId = $existing['loan_id'];
         $newLoanId = $data['loan_id'] ?? $oldLoanId;
 
@@ -112,9 +125,10 @@ class Expense extends BaseModel
             
             if ($newLoanId != $oldLoanId) {
                 // Se cambió a otro préstamo
-                // 1. Obtener nombre del nuevo préstamo
-                $stmt = $this->db->prepare("SELECT loan, amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
-                $stmt->execute([':loan_id' => $newLoanId]);
+                $stmt = $this->db->prepare(
+                    "SELECT loan, amount FROM loans WHERE id = :loan_id AND company_id = :company_id AND deleted_at IS NULL"
+                );
+                $stmt->execute([':loan_id' => $newLoanId, ':company_id' => $companyId]);
                 $newLoanData = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 if (!$newLoanData) {
@@ -123,11 +137,10 @@ class Expense extends BaseModel
                 
                 $data['description'] = "Pago Préstamo " . $newLoanData['loan'];
                 
-                // 2. Validar saldo del nuevo préstamo (no necesitamos excluir el pago actual porque pertenece al otro préstamo)
                 $prestado = $newLoanData['amount'];
                 $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
-                                          WHERE loan_id = :loan_id AND deleted_at IS NULL");
-                $stmt->execute([':loan_id' => $newLoanId]);
+                                          WHERE loan_id = :loan_id AND company_id = :company_id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $newLoanId, ':company_id' => $companyId]);
                 $pagado = $stmt->fetchColumn() ?? 0;
                 
                 $pendiente = $prestado - $pagado;
@@ -139,15 +152,15 @@ class Expense extends BaseModel
                 // Sigue siendo el mismo préstamo
                 $data['description'] = $existing['description']; // Mantener descripción original
 
-                // Traer datos del préstamo
-                $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id AND deleted_at IS NULL");
-                $stmt->execute([':loan_id' => $oldLoanId]);
+                $stmt = $this->db->prepare(
+                    "SELECT amount FROM loans WHERE id = :loan_id AND company_id = :company_id AND deleted_at IS NULL"
+                );
+                $stmt->execute([':loan_id' => $oldLoanId, ':company_id' => $companyId]);
                 $prestado = $stmt->fetchColumn();
 
-                // Total pagado SIN incluir el pago actual
                 $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses 
-                                          WHERE loan_id = :loan_id AND id != :id AND deleted_at IS NULL");
-                $stmt->execute([':loan_id' => $oldLoanId, ':id' => $id]);
+                                          WHERE loan_id = :loan_id AND id != :id AND company_id = :company_id AND deleted_at IS NULL");
+                $stmt->execute([':loan_id' => $oldLoanId, ':id' => $id, ':company_id' => $companyId]);
                 $pagadoOtros = $stmt->fetchColumn() ?? 0;
 
                 $pendienteSinEstePago = $prestado - $pagadoOtros;
@@ -162,10 +175,11 @@ class Expense extends BaseModel
         if ($oldLoanId) {
             $stmt = $this->db->prepare("UPDATE expenses 
                 SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code, loan_id = :loan_id
-                WHERE id = :id");
+                WHERE id = :id AND company_id = :company_id");
                 
             $result = $stmt->execute([
                 ':id'             => $id,
+                ':company_id'     => $companyId,
                 ':date'           => $data['date'],
                 ':description'    => $data['description'],
                 ':amount'         => $data['amount'],
@@ -175,16 +189,20 @@ class Expense extends BaseModel
             ]);
         } else {
             $stmt = $this->db->prepare("UPDATE expenses 
-                SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, code = :code
-                WHERE id = :id");
+                SET date = :date, description = :description, amount = :amount, payment_method = :payment_method, 
+                    code = :code, category_id = :category_id, payment_status = :payment_status
+                WHERE id = :id AND company_id = :company_id");
                 
             $result = $stmt->execute([
                 ':id'             => $id,
+                ':company_id'     => $companyId,
                 ':date'           => $data['date'],
                 ':description'    => $data['description'],
                 ':amount'         => $data['amount'],
                 ':payment_method' => $data['payment_method'],
-                ':code'           => $data['code'] ?? null
+                ':code'           => $data['code'] ?? null,
+                ':category_id'    => !empty($data['category_id']) ? $data['category_id'] : null,
+                ':payment_status' => $data['payment_status'] ?? 'Pagado'
             ]);
         }
 
@@ -217,19 +235,23 @@ class Expense extends BaseModel
 
     private function updateLoanStatus($loanId)
     {
-        $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id");
-        $stmt->execute([':loan_id' => $loanId]);
+        $companyId = $this->getCompanyId();
+
+        $stmt = $this->db->prepare("SELECT amount FROM loans WHERE id = :loan_id AND company_id = :company_id");
+        $stmt->execute([':loan_id' => $loanId, ':company_id' => $companyId]);
         $prestado = $stmt->fetchColumn();
 
-        $stmt = $this->db->prepare("SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE loan_id = :loan_id AND deleted_at IS NULL");
-        $stmt->execute([':loan_id' => $loanId]);
+        $stmt = $this->db->prepare(
+            "SELECT COALESCE(SUM(amount), 0) FROM expenses WHERE loan_id = :loan_id AND company_id = :company_id AND deleted_at IS NULL"
+        );
+        $stmt->execute([':loan_id' => $loanId, ':company_id' => $companyId]);
         $pagado = $stmt->fetchColumn() ?? 0;
 
         $nuevoPendiente = $prestado - $pagado;
         $nuevoEstado = ($nuevoPendiente <= 1) ? 'Pagado' : 'Pendiente';
 
-        $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id");
-        $stmt->execute([':status' => $nuevoEstado, ':loan_id' => $loanId]);
+        $stmt = $this->db->prepare("UPDATE loans SET status = :status WHERE id = :loan_id AND company_id = :company_id");
+        $stmt->execute([':status' => $nuevoEstado, ':loan_id' => $loanId, ':company_id' => $companyId]);
     }
 
     public function getLoans()
@@ -239,12 +261,16 @@ class Expense extends BaseModel
         (l.amount - COALESCE(SUM(e.amount),0)) AS pendiente
         FROM loans l
         LEFT JOIN expenses e ON l.id = e.loan_id 
-        AND e.deleted_at IS NULL
+        AND e.deleted_at IS NULL AND e.company_id = :company_id2
         WHERE l.deleted_at IS NULL 
+        AND l.company_id = :company_id
         AND l.status = 'pendiente'
         GROUP BY l.id, l.loan, l.amount, l.payment_method, l.code
     ");
-        $stmt->execute();
+        $stmt->execute([
+            ':company_id' => $this->getCompanyId(),
+            ':company_id2' => $this->getCompanyId()
+        ]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
