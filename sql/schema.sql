@@ -54,6 +54,7 @@ CREATE TABLE users (
 CREATE TABLE categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   company_id INT NOT NULL,
+  date DATE NULL DEFAULT NULL,
   name VARCHAR(100) NOT NULL,
   type ENUM('ingreso','gasto','ambos') NOT NULL DEFAULT 'ambos',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -132,6 +133,7 @@ CREATE TABLE loans (
 CREATE TABLE products (
   id INT AUTO_INCREMENT PRIMARY KEY,
   company_id INT NOT NULL,
+  date DATE NULL DEFAULT NULL,
   name VARCHAR(150) NOT NULL,
   sku VARCHAR(50) DEFAULT NULL,
   description TEXT DEFAULT NULL,
@@ -159,6 +161,7 @@ CREATE TABLE stock_movements (
   reference_type VARCHAR(50) DEFAULT NULL COMMENT 'compra, venta, ajuste, pedido',
   reference_id INT DEFAULT NULL,
   notes VARCHAR(255) DEFAULT NULL,
+  date DATE NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (company_id) REFERENCES companies(id),
   FOREIGN KEY (product_id) REFERENCES products(id),
@@ -178,6 +181,7 @@ CREATE TABLE orders (
   tax_amount DECIMAL(12, 2) NOT NULL DEFAULT 0,
   total DECIMAL(12, 2) NOT NULL DEFAULT 0,
   notes TEXT DEFAULT NULL,
+  date DATE NULL DEFAULT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   deleted_at TIMESTAMP NULL DEFAULT NULL,
@@ -197,6 +201,7 @@ CREATE TABLE order_items (
   quantity INT NOT NULL,
   unit_price DECIMAL(12, 2) NOT NULL,
   subtotal DECIMAL(12, 2) NOT NULL,
+  date DATE NULL DEFAULT NULL,
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=InnoDB;

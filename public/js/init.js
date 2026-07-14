@@ -183,7 +183,7 @@ $(document).ready(function () {
       columnDefs: [
         { className: "dt-body-right", targets: [2, 3, 4, 5] },
         { className: "dt-body-center", targets: 0 },
-        { orderable: false, targets: -1 }
+        { orderable: false, targets: -1 },
       ],
     });
   }
@@ -202,14 +202,17 @@ $(document).ready(function () {
       columnDefs: [
         { className: "dt-body-right", targets: 3 },
         { className: "dt-body-center", targets: [0, 2, 4] },
-        { orderable: false, targets: -1 }
+        { orderable: false, targets: -1 },
       ],
     });
   }
 
   // Movements History DataTable
   let movementsHistoryTable;
-  if (typeof $.fn.DataTable === "function" && $("#movementsHistoryTable").length) {
+  if (
+    typeof $.fn.DataTable === "function" &&
+    $("#movementsHistoryTable").length
+  ) {
     movementsHistoryTable = $("#movementsHistoryTable").DataTable({
       responsive: true,
       autoWidth: false,
@@ -219,9 +222,7 @@ $(document).ready(function () {
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
       },
-      columnDefs: [
-        { className: "dt-body-center", targets: [0, 1, 2] }
-      ],
+      columnDefs: [{ className: "dt-body-center", targets: [0, 1, 2] }],
     });
   }
   let loanHistoryTable;
@@ -230,14 +231,12 @@ $(document).ready(function () {
       responsive: true,
       autoWidth: false,
       pageLength: 5,
-      dom: "frtip", 
+      dom: "frtip",
       order: [[0, "desc"]],
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
       },
-      columnDefs: [
-        { className: "dt-body-right", targets: 3 },
-      ],
+      columnDefs: [{ className: "dt-body-right", targets: 3 }],
     });
   }
 
@@ -313,22 +312,35 @@ $(document).ready(function () {
         $('#modalEditExpense input[name="id"]').val(id);
         $('#modalEditExpense input[name="date"]').val(date);
         $('#modalEditExpense input[name="description"]').val(description);
-        
+
         if (description.startsWith("Pago Préstamo")) {
-            $('#modalEditExpense input[name="description"]').prop('readonly', true);
-            $('#modalEditExpense input[name="description"]').addClass('grey-text');
+          $('#modalEditExpense input[name="description"]').prop(
+            "readonly",
+            true,
+          );
+          $('#modalEditExpense input[name="description"]').addClass(
+            "grey-text",
+          );
         } else {
-            $('#modalEditExpense input[name="description"]').prop('readonly', false);
-            $('#modalEditExpense input[name="description"]').removeClass('grey-text');
+          $('#modalEditExpense input[name="description"]').prop(
+            "readonly",
+            false,
+          );
+          $('#modalEditExpense input[name="description"]').removeClass(
+            "grey-text",
+          );
         }
 
         $('#modalEditExpense input[name="amount"]').val(formatNumber(amount));
-        
+
         // Categoría select
         $("#edit_expense_category_id option").prop("selected", false);
-        $('#edit_expense_category_id option[value="' + category_id + '"]').prop("selected", true);
+        $('#edit_expense_category_id option[value="' + category_id + '"]').prop(
+          "selected",
+          true,
+        );
         $("#edit_expense_category_id").formSelect({
-          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+          dropdownOptions: { coverTrigger: false, closeOnClick: true },
         });
 
         // 👇 Truco: marcar el option correcto ANTES de refrescar
@@ -350,9 +362,11 @@ $(document).ready(function () {
 
         // Payment status select
         $("#edit_expense_payment_status option").prop("selected", false);
-        $('#edit_expense_payment_status option[value="' + payment_status + '"]').prop("selected", true);
+        $(
+          '#edit_expense_payment_status option[value="' + payment_status + '"]',
+        ).prop("selected", true);
         $("#edit_expense_payment_status").formSelect({
-          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+          dropdownOptions: { coverTrigger: false, closeOnClick: true },
         });
       } else if (modal.id === "modalEditIncome") {
         // Obtener datos del botón
@@ -371,30 +385,53 @@ $(document).ready(function () {
         $('#modalEditIncome input[name="description"]').val(description);
 
         if (description.startsWith("Préstamo")) {
-            $('#modalEditIncome input[name="description"]').prop('readonly', true);
-            $('#modalEditIncome input[name="description"]').addClass('grey-text');
-            
-            // Cambiar estilos a "loans-color"
-            $('#modalEditIncome h5').removeClass('secondary-color-text').addClass('loans-color-text');
-            $('#modalEditIncome h5').html('<i class="material-icons left">sync</i> Editar Préstamo');
-            $('#modalEditIncome button[type="submit"]').removeClass('secondary-color').addClass('loans-color');
+          $('#modalEditIncome input[name="description"]').prop(
+            "readonly",
+            true,
+          );
+          $('#modalEditIncome input[name="description"]').addClass("grey-text");
+
+          // Cambiar estilos a "loans-color"
+          $("#modalEditIncome h5")
+            .removeClass("secondary-color-text")
+            .addClass("loans-color-text");
+          $("#modalEditIncome h5").html(
+            '<i class="material-icons left">sync</i> Editar Préstamo',
+          );
+          $('#modalEditIncome button[type="submit"]')
+            .removeClass("secondary-color")
+            .addClass("loans-color");
         } else {
-            $('#modalEditIncome input[name="description"]').prop('readonly', false);
-            $('#modalEditIncome input[name="description"]').removeClass('grey-text');
-            
-            // Revertir a "secondary-color"
-            $('#modalEditIncome h5').removeClass('loans-color-text').addClass('secondary-color-text');
-            $('#modalEditIncome h5').html('<i class="material-icons left">edit</i> Editar Ingreso');
-            $('#modalEditIncome button[type="submit"]').removeClass('loans-color').addClass('secondary-color');
+          $('#modalEditIncome input[name="description"]').prop(
+            "readonly",
+            false,
+          );
+          $('#modalEditIncome input[name="description"]').removeClass(
+            "grey-text",
+          );
+
+          // Revertir a "secondary-color"
+          $("#modalEditIncome h5")
+            .removeClass("loans-color-text")
+            .addClass("secondary-color-text");
+          $("#modalEditIncome h5").html(
+            '<i class="material-icons left">edit</i> Editar Ingreso',
+          );
+          $('#modalEditIncome button[type="submit"]')
+            .removeClass("loans-color")
+            .addClass("secondary-color");
         }
 
         $('#modalEditIncome input[name="amount"]').val(formatNumber(amount));
-        
+
         // Categoría select
         $("#edit_income_category_id option").prop("selected", false);
-        $('#edit_income_category_id option[value="' + category_id + '"]').prop("selected", true);
+        $('#edit_income_category_id option[value="' + category_id + '"]').prop(
+          "selected",
+          true,
+        );
         $("#edit_income_category_id").formSelect({
-          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+          dropdownOptions: { coverTrigger: false, closeOnClick: true },
         });
 
         // 👇 Truco: marcar el option correcto ANTES de refrescar
@@ -416,9 +453,11 @@ $(document).ready(function () {
 
         // Payment status select
         $("#edit_income_payment_status option").prop("selected", false);
-        $('#edit_income_payment_status option[value="' + payment_status + '"]').prop("selected", true);
+        $(
+          '#edit_income_payment_status option[value="' + payment_status + '"]',
+        ).prop("selected", true);
         $("#edit_income_payment_status").formSelect({
-          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+          dropdownOptions: { coverTrigger: false, closeOnClick: true },
         });
       } else if (modal.id === "modalEditLoanPayment") {
         // Obtener datos del botón
@@ -432,10 +471,16 @@ $(document).ready(function () {
         // Rellenar el formulario
         $('#modalEditLoanPayment input[name="id"]').val(id);
         $('#modalEditLoanPayment input[name="date"]').val(date);
-        $('#modalEditLoanPayment input[name="amount"]').val(formatNumber(amount));
-        
+        $('#modalEditLoanPayment input[name="amount"]').val(
+          formatNumber(amount),
+        );
+
         $("#modal_edit_loan_payment_method option").prop("selected", false); // limpiar
-        $('#modal_edit_loan_payment_method option[value="' + payment_method + '"]').prop("selected", true);
+        $(
+          '#modal_edit_loan_payment_method option[value="' +
+            payment_method +
+            '"]',
+        ).prop("selected", true);
         $("#modal_edit_loan_payment_method").formSelect({
           dropdownOptions: {
             coverTrigger: false,
@@ -444,7 +489,10 @@ $(document).ready(function () {
         });
 
         $("#modal_edit_loan_id option").prop("selected", false); // limpiar
-        $('#modal_edit_loan_id option[value="' + loan_id + '"]').prop("selected", true);
+        $('#modal_edit_loan_id option[value="' + loan_id + '"]').prop(
+          "selected",
+          true,
+        );
         $("#modal_edit_loan_id").formSelect({
           dropdownOptions: {
             coverTrigger: false,
@@ -460,11 +508,14 @@ $(document).ready(function () {
 
         $('#modalEditCategory input[name="id"]').val(id);
         $('#modalEditCategory input[name="name"]').val(name);
-        
+
         $("#edit_category_type option").prop("selected", false);
-        $('#edit_category_type option[value="' + type + '"]').prop("selected", true);
+        $('#edit_category_type option[value="' + type + '"]').prop(
+          "selected",
+          true,
+        );
         $("#edit_category_type").formSelect({
-          dropdownOptions: { coverTrigger: false, closeOnClick: true }
+          dropdownOptions: { coverTrigger: false, closeOnClick: true },
         });
       } else if (modal.id === "modalEditProduct") {
         var id = $(trigger).data("id");
@@ -480,8 +531,12 @@ $(document).ready(function () {
         $('#modalEditProduct input[name="name"]').val(name);
         $('#modalEditProduct textarea[name="description"]').val(description);
         $('#modalEditProduct input[name="min_stock"]').val(min_stock);
-        $('#modalEditProduct input[name="cost_price"]').val(formatNumber(cost_price));
-        $('#modalEditProduct input[name="sale_price"]').val(formatNumber(sale_price));
+        $('#modalEditProduct input[name="cost_price"]').val(
+          formatNumber(cost_price),
+        );
+        $('#modalEditProduct input[name="sale_price"]').val(
+          formatNumber(sale_price),
+        );
       }
     },
   });
@@ -523,48 +578,61 @@ $(document).ready(function () {
     });
 
   // Load Loan History via AJAX
-  $(document).on("click", ".btn-view-history", function(e) {
+  $(document).on("click", ".btn-view-history", function (e) {
     e.preventDefault();
     const loanId = $(this).data("id");
     const loanName = $(this).data("loan");
-    
+
     $("#historyLoanName").text(loanName);
-    
+
     if (loanHistoryTable) {
-        loanHistoryTable.clear().draw();
+      loanHistoryTable.clear().draw();
     }
-    
+
     $.ajax({
-        url: "?action=getLoanPayments&id=" + loanId,
-        method: "GET",
-        dataType: "json",
-        success: function(res) {
-            if (res.success && loanHistoryTable) {
-                res.data.forEach(function(payment) {
-                    const dateParts = payment.date.split('-');
-                    const formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
-                    const formattedAmount = '$' + formatNumber(payment.amount);
-                    const method = '<span class="badge grey lighten-3 black-text" style="float: none; border-radius: 4px;">' + payment.payment_method + '</span>';
-                    const code = payment.payment_method === 'Efectivo' ? '-' : (payment.code || '');
-                    
-                    loanHistoryTable.row.add([
-                        formattedDate,
-                        method,
-                        code,
-                        '<span class="accent-color-text" style="font-weight:600;">' + formattedAmount + '</span>'
-                    ]);
-                });
-                loanHistoryTable.draw(false);
-                setTimeout(function() {
-                    loanHistoryTable.columns.adjust().responsive.recalc();
-                }, 200);
-            } else {
-                M.toast({html: res.message || 'Error al procesar datos', classes: 'error-color'});
-            }
-        },
-        error: function() {
-            M.toast({html: 'Error al cargar el historial', classes: 'error-color'});
+      url: "?action=getLoanPayments&id=" + loanId,
+      method: "GET",
+      dataType: "json",
+      success: function (res) {
+        if (res.success && loanHistoryTable) {
+          res.data.forEach(function (payment) {
+            const dateParts = payment.date.split("-");
+            const formattedDate =
+              dateParts[2] + "/" + dateParts[1] + "/" + dateParts[0];
+            const formattedAmount = "$" + formatNumber(payment.amount);
+            const method =
+              '<span class="badge grey lighten-3 black-text" style="float: none; border-radius: 4px;">' +
+              payment.payment_method +
+              "</span>";
+            const code =
+              payment.payment_method === "Efectivo" ? "-" : payment.code || "";
+
+            loanHistoryTable.row.add([
+              formattedDate,
+              method,
+              code,
+              '<span class="accent-color-text" style="font-weight:600;">' +
+                formattedAmount +
+                "</span>",
+            ]);
+          });
+          loanHistoryTable.draw(false);
+          setTimeout(function () {
+            loanHistoryTable.columns.adjust().responsive.recalc();
+          }, 200);
+        } else {
+          M.toast({
+            html: res.message || "Error al procesar datos",
+            classes: "error-color",
+          });
         }
+      },
+      error: function () {
+        M.toast({
+          html: "Error al cargar el historial",
+          classes: "error-color",
+        });
+      },
     });
   });
 
@@ -786,54 +854,68 @@ $(document).ready(function () {
   });
 
   // Load Product Movements History via AJAX
-  $(document).on("click", ".btn-view-movements-history", function(e) {
+  $(document).on("click", ".btn-view-movements-history", function (e) {
     e.preventDefault();
     const productId = $(this).data("id");
     const productName = $(this).data("name");
-    
+
     $("#movementsProductName").text(productName);
-    
+
     if (movementsHistoryTable) {
-        movementsHistoryTable.clear().draw();
+      movementsHistoryTable.clear().draw();
     }
-    
+
     $.ajax({
-        url: "?action=getProductMovements&id=" + productId,
-        method: "GET",
-        dataType: "json",
-        success: function(res) {
-            if (res.success && movementsHistoryTable) {
-                res.data.forEach(function(mov) {
-                    const dateObj = new Date(mov.created_at);
-                    const formattedDate = dateObj.toLocaleDateString('es-ES') + ' ' + dateObj.toLocaleTimeString('es-ES', {hour: '2-digit', minute:'2-digit'});
-                    
-                    const typeBadge = mov.type === 'entrada' 
-                        ? '<span class="badge green white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Entrada</span>'
-                        : '<span class="badge red white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Salida</span>';
-                    
-                    const reference = mov.reference_type 
-                        ? (mov.reference_type.toUpperCase() + (mov.reference_id ? ' #' + mov.reference_id : ''))
-                        : '-';
-                    
-                    movementsHistoryTable.row.add([
-                        formattedDate,
-                        typeBadge,
-                        mov.quantity,
-                        reference,
-                        htmlspecialchars(mov.notes || '')
-                    ]);
-                });
-                movementsHistoryTable.draw(false);
-                setTimeout(function() {
-                    movementsHistoryTable.columns.adjust().responsive.recalc();
-                }, 200);
-            } else {
-                M.toast({html: res.message || 'Error al procesar datos', classes: 'error-color'});
-            }
-        },
-        error: function() {
-            M.toast({html: 'Error al cargar el historial', classes: 'error-color'});
+      url: "?action=getProductMovements&id=" + productId,
+      method: "GET",
+      dataType: "json",
+      success: function (res) {
+        if (res.success && movementsHistoryTable) {
+          res.data.forEach(function (mov) {
+            const dateObj = new Date(mov.created_at);
+            const formattedDate =
+              dateObj.toLocaleDateString("es-ES") +
+              " " +
+              dateObj.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+            const typeBadge =
+              mov.type === "entrada"
+                ? '<span class="badge green white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Entrada</span>'
+                : '<span class="badge red white-text" style="float: none; border-radius: 4px; padding: 2px 6px;">Salida</span>';
+
+            const reference = mov.reference_type
+              ? mov.reference_type.toUpperCase() +
+                (mov.reference_id ? " #" + mov.reference_id : "")
+              : "-";
+
+            movementsHistoryTable.row.add([
+              formattedDate,
+              typeBadge,
+              mov.quantity,
+              reference,
+              htmlspecialchars(mov.notes || ""),
+            ]);
+          });
+          movementsHistoryTable.draw(false);
+          setTimeout(function () {
+            movementsHistoryTable.columns.adjust().responsive.recalc();
+          }, 200);
+        } else {
+          M.toast({
+            html: res.message || "Error al procesar datos",
+            classes: "error-color",
+          });
         }
+      },
+      error: function () {
+        M.toast({
+          html: "Error al cargar el historial",
+          classes: "error-color",
+        });
+      },
     });
   });
 
@@ -847,7 +929,7 @@ $(document).ready(function () {
       const price = parseFloat(priceText.replace(/\D/g, "")) || 0;
       const qty = parseInt($(this).find(".input-item-qty").val()) || 0;
       const rowSubtotal = price * qty;
-      
+
       $(this).find(".label-item-subtotal").text(formatNumber(rowSubtotal));
       subtotal += rowSubtotal;
     });
@@ -858,18 +940,18 @@ $(document).ready(function () {
     let taxRate = 0;
     const taxSpan = $("#orderTaxVal");
     if (taxSpan.length) {
-        const labelText = taxSpan.closest("span").text();
-        const match = labelText.match(/IVA\s*\((\d+(\.\d+)?)\%\)/i);
-        if (match) {
-            taxRate = parseFloat(match[1]);
-        }
+      const labelText = taxSpan.closest("span").text();
+      const match = labelText.match(/IVA\s*\((\d+(\.\d+)?)\%\)/i);
+      if (match) {
+        taxRate = parseFloat(match[1]);
+      }
     }
 
     const taxAmount = subtotal * (taxRate / 100);
     const total = subtotal + taxAmount;
 
     if (taxSpan.length) {
-        taxSpan.text(formatNumber(taxAmount));
+      taxSpan.text(formatNumber(taxAmount));
     }
     $("#orderTotalVal").text(formatNumber(total));
   }
@@ -878,7 +960,7 @@ $(document).ready(function () {
   $(document).on("change", ".select-order-product", function () {
     const selectedOpt = $(this).find("option:selected");
     const price = selectedOpt.data("price") || 0;
-    
+
     const row = $(this).closest(".item-row");
     row.find(".input-item-price").val(formatNumber(price));
     recalculateOrderTotals();
@@ -892,17 +974,17 @@ $(document).ready(function () {
   // Agregar nueva fila de producto
   $("#btnAddNewOrderItem").on("click", function (e) {
     e.preventDefault();
-    
+
     // Clonar la primera fila
     const firstRow = $("#orderItemsContainer .item-row").first();
     const newRow = firstRow.clone();
-    
+
     // Resetear valores en el clon
     newRow.find("select").val("");
     newRow.find(".input-item-price").val("");
     newRow.find(".input-item-qty").val("1");
     newRow.find(".label-item-subtotal").text("0");
-    
+
     $("#orderItemsContainer").append(newRow);
   });
 
@@ -913,132 +995,146 @@ $(document).ready(function () {
       $(this).closest(".item-row").remove();
       recalculateOrderTotals();
     } else {
-      M.toast({html: "El pedido debe tener al menos un producto.", classes: "error-color"});
+      M.toast({
+        html: "El pedido debe tener al menos un producto.",
+        classes: "error-color",
+      });
     }
   });
 
   // Enviar formulario de creación
   $("#formCreateOrder").on("submit", function (e) {
-      e.preventDefault();
-      let valid = true;
-      $(".select-order-product").each(function() {
-          if (!$(this).val()) {
-              valid = false;
-          }
-      });
-      if (!valid) {
-          Swal.fire({ icon: "error", title: "Error", text: "Por favor, selecciona un producto para cada fila." });
-          return;
+    e.preventDefault();
+    let valid = true;
+    $(".select-order-product").each(function () {
+      if (!$(this).val()) {
+        valid = false;
       }
-      handleAjaxSubmit($(this));
+    });
+    if (!valid) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Por favor, selecciona un producto para cada fila.",
+      });
+      return;
+    }
+    handleAjaxSubmit($(this));
   });
 
   // Ver detalles del pedido mediante AJAX
-  $(document).on("click", ".btn-view-order-details", function(e) {
+  $(document).on("click", ".btn-view-order-details", function (e) {
     e.preventDefault();
     const orderId = $(this).data("id");
-    
+
     $("#detailsItemsContainer").html("");
     $("#detailsNotesContainer").hide();
-    
+
     $.ajax({
       url: "?action=getOrderItems&id=" + orderId,
       method: "GET",
       dataType: "json",
-      success: function(res) {
+      success: function (res) {
         if (res.success) {
           const order = res.data;
-          
+
           $("#detailsOrderNumber").text(order.order_number);
           $("#detailsCustomerName").text(order.customer_name);
-          
+
           const dateObj = new Date(order.created_at);
-          $("#detailsOrderDate").text(dateObj.toLocaleDateString('es-ES'));
-          
+          $("#detailsOrderDate").text(dateObj.toLocaleDateString("es-ES"));
+
           // Badge de estado
           const badge = $("#detailsOrderStatusBadge");
           badge.removeClass("grey blue green red");
           badge.text(order.status);
-          if (order.status === 'Borrador') badge.addClass("grey");
-          else if (order.status === 'Confirmado') badge.addClass("blue");
-          else if (order.status === 'Entregado') badge.addClass("green");
+          if (order.status === "Borrador") badge.addClass("grey");
+          else if (order.status === "Confirmado") badge.addClass("blue");
+          else if (order.status === "Entregado") badge.addClass("green");
           else badge.addClass("red");
-          
+
           // Llenar ítems
-          order.items.forEach(function(item) {
-            const formattedPrice = '$' + formatNumber(item.unit_price);
-            const formattedSubtotal = '$' + formatNumber(item.subtotal);
-            
+          order.items.forEach(function (item) {
+            const formattedPrice = "$" + formatNumber(item.unit_price);
+            const formattedSubtotal = "$" + formatNumber(item.subtotal);
+
             $("#detailsItemsContainer").append(`
               <tr>
-                <td style="font-weight: 500;">\${htmlspecialchars(item.product_name)} <span class="grey-text" style="font-size:0.8rem;">(\${htmlspecialchars(item.sku || '')})</span></td>
-                <td class="right-align">\${formattedPrice}</td>
-                <td class="center-align">\${item.quantity}</td>
-                <td class="right-align" style="font-weight:600;">\${formattedSubtotal}</td>
+                <td style="font-weight: 500;">${htmlspecialchars(item.product_name)} <span class="grey-text" style="font-size:0.8rem;">(${htmlspecialchars(item.sku || "")})</span></td>
+                <td class="right-align">${formattedPrice}</td>
+                <td class="center-align">${item.quantity}</td>
+                <td class="right-align" style="font-weight:600;">${formattedSubtotal}</td>
               </tr>
             `);
           });
-          
+
           // Notas
           if (order.notes) {
-              $("#detailsNotesText").text(order.notes);
-              $("#detailsNotesContainer").show();
+            $("#detailsNotesText").text(order.notes);
+            $("#detailsNotesContainer").show();
           }
-          
+
           // Totales
-          $("#detailsSubtotalText").text('$' + formatNumber(order.subtotal));
+          $("#detailsSubtotalText").text("$" + formatNumber(order.subtotal));
           if ($("#detailsTaxText").length) {
-              $("#detailsTaxText").text('$' + formatNumber(order.tax_amount));
+            $("#detailsTaxText").text("$" + formatNumber(order.tax_amount));
           }
-          $("#detailsTotalText").text('$' + formatNumber(order.total));
-          
+          $("#detailsTotalText").text("$" + formatNumber(order.total));
         } else {
-          M.toast({html: res.message || 'Error al cargar detalles', classes: 'error-color'});
+          M.toast({
+            html: res.message || "Error al cargar detalles",
+            classes: "error-color",
+          });
         }
       },
-      error: function() {
-        M.toast({html: 'Error de comunicación con el servidor', classes: 'error-color'});
-      }
+      error: function () {
+        M.toast({
+          html: "Error de comunicación con el servidor",
+          classes: "error-color",
+        });
+      },
     });
   });
 
   // Cambio de estado de pedido (Confirmar, Entregar, Cancelar)
-  $(document).on("click", ".btn-change-order-status", function(e) {
+  $(document).on("click", ".btn-change-order-status", function (e) {
     e.preventDefault();
     const orderId = $(this).data("id");
     const newStatus = $(this).data("status");
-    
-    let confirmTitle = '¿Confirmar pedido?';
-    let confirmText = 'Esto descontará los productos del inventario.';
-    let confirmBtn = 'Confirmar';
-    let confirmColor = '#2196f3';
-    
-    if (newStatus === 'Entregado') {
-        confirmTitle = '¿Marcar como Entregado?';
-        confirmText = 'Esto registrará la entrega y generará un ingreso financiero automático.';
-        confirmBtn = 'Marcar como Entregado';
-        confirmColor = '#4caf50';
-    } else if (newStatus === 'Cancelado') {
-        confirmTitle = '¿Cancelar pedido?';
-        confirmText = 'Esto cancelará el pedido y devolverá los productos al inventario si aplica.';
-        confirmBtn = 'Cancelar Pedido';
-        confirmColor = '#f44336';
-    } else if (newStatus === 'Borrador') {
-        confirmTitle = '¿Revertir a Borrador?';
-        confirmText = 'Esto regresará el pedido a borrador.';
-        confirmBtn = 'Revertir';
-        confirmColor = '#9e9e9e';
+
+    let confirmTitle = "¿Confirmar pedido?";
+    let confirmText = "Esto descontará los productos del inventario.";
+    let confirmBtn = "Confirmar";
+    let confirmColor = "#2196f3";
+
+    if (newStatus === "Entregado") {
+      confirmTitle = "¿Marcar como Entregado?";
+      confirmText =
+        "Esto registrará la entrega y generará un ingreso financiero automático.";
+      confirmBtn = "Marcar como Entregado";
+      confirmColor = "#4caf50";
+    } else if (newStatus === "Cancelado") {
+      confirmTitle = "¿Cancelar pedido?";
+      confirmText =
+        "Esto cancelará el pedido y devolverá los productos al inventario si aplica.";
+      confirmBtn = "Cancelar Pedido";
+      confirmColor = "#f44336";
+    } else if (newStatus === "Borrador") {
+      confirmTitle = "¿Revertir a Borrador?";
+      confirmText = "Esto regresará el pedido a borrador.";
+      confirmBtn = "Revertir";
+      confirmColor = "#9e9e9e";
     }
-    
+
     Swal.fire({
       title: confirmTitle,
       text: confirmText,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: confirmColor,
-      cancelButtonColor: '#9e9e9e',
+      cancelButtonColor: "#9e9e9e",
       confirmButtonText: confirmBtn,
-      cancelButtonText: 'No, conservar'
+      cancelButtonText: "No, conservar",
     }).then((result) => {
       if (result.isConfirmed) {
         $("#changeStatusOrderId").val(orderId);
@@ -1049,7 +1145,7 @@ $(document).ready(function () {
   });
 
   function htmlspecialchars(string) {
-    if (!string) return '';
+    if (!string) return "";
     return string
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
